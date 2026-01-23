@@ -66,7 +66,7 @@ jobs:
     - name: Checkout website repository
       uses: actions/checkout@v6
       with:
-        repository: openjverein/openjverein.github.io
+        repository: lenilsas/openjverein.github.io
         path: website
         ref: 'main'
         token: ${{ secrets.WEBSITE_DEPLOY_KEY }}
@@ -78,16 +78,28 @@ jobs:
         if [ ! -d website/$path ];then
           mkdir -p website/$path
           #Add new direcotry in repository.xml
-          sed -i "s#<plugins name=\"OpenJVerein 3\">#\0\n<plugin url=\"https://openjverein.github.io/$path\"/>#" website/jameica-repository/repository.xml
+          sed -i "s#<plugins name=\"OpenJVerein\" certificate=\"https://eickedorfer-hof.de/testrepro/openjverein.crt\">#\0\n<plugin url=\"https://openjverein.github.io/$path\"/>#" website/jameica-repository/repository.xml
         fi
-        
+
         cp "jverein/${{ steps.openjverein.outputs.selected_path }}" "website/$path/${{ steps.openjverein.outputs.selected_filename }}"
-        cp "jverein/${{ steps.openjverein.outputs.selected_plugin_path }}" website/$path/plugin.xml
+        cp "jverein/${{ steps.openjverein.outputs.selected_plugin_path }}" "website/$path/plugin.xml"
         cd website
+
+        #Sign zip
+        echo "${{ secrets.CODESIGN_KEY }}" > singn.key
+        cat << EOF > ./singn.key
+        ${{ secrets.CODESIGN_KEY_TEST }}
+        EOF
+        openssl dgst -sha1 -sign sign.key -out "$path/${{ steps.openjverein.outputs.selected_filename }}.sha1" $path/${{ steps.openjverein.outputs.selected_filename }}"
         
         git config --local user.email "actions@github.com"
         git config --local user.name "Github Actions"
-        git add -A
+        
+        git add jameica-repository/repository.xml
+        git add "$path/plugin.xml"
+        git add "$path/${{ steps.openjverein.outputs.selected_filename }}"
+        git add "$path/${{ steps.openjverein.outputs.selected_filename }}.sha1"
+        
         git commit -m "Release ${{ steps.openjverein.outputs.selected_version }}"
         git push
 
