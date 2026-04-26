@@ -301,7 +301,7 @@ public class JVereinTablePart extends TablePart
     }
     catch (OperationCanceledException e)
     {
-      throw new OperationCanceledException(e);
+      throw e;
     }
     catch (ApplicationException e)
     {

@@ -117,6 +117,10 @@ public class SpaltenAuswahlDialog extends AbstractDialog<List<TableColumn>>
   @Override
   protected List<TableColumn> getData() throws Exception
   {
+    if (list == null)
+    {
+      throw new OperationCanceledException();
+    }
     return list;
   }
 
