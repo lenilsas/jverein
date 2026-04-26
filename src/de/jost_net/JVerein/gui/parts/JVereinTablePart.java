@@ -33,7 +33,7 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
-import org.supercsv.cellprocessor.constraint.NotNull;
+import org.supercsv.cellprocessor.ConvertNullTo;
 import org.supercsv.cellprocessor.ift.CellProcessor;
 import org.supercsv.io.CsvMapWriter;
 import org.supercsv.io.ICsvMapWriter;
@@ -242,14 +242,15 @@ public class JVereinTablePart extends TablePart
           writer = new CsvMapWriter(new FileWriter(file),
               CsvPreference.EXCEL_NORTH_EUROPE_PREFERENCE);
 
-          CellProcessor[] cellProcessor = new CellProcessor[t.getColumnCount()];
-          String[] header = new String[listeSortiert.size()];
+          CellProcessor[] cellProcessor = new CellProcessor[listeAuswahl
+              .size()];
+          String[] header = new String[listeAuswahl.size()];
 
           int n = 0;
-          for (TableColumn col : listeSortiert)
+          for (TableColumn col : listeAuswahl)
           {
             header[n] = col.getText();
-            cellProcessor[n++] = new NotNull();
+            cellProcessor[n++] = new ConvertNullTo("");
           }
           writer.writeHeader(header);
 
