@@ -3,7 +3,7 @@ name: CodeQL
 on:
     push:
         branches:
-        - codeql
+        - master
     workflow_dispatch: {}
 
 concurrency:
