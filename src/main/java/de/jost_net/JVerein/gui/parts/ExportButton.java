@@ -8,6 +8,6 @@ public class ExportButton extends ButtonRtoL
   public ExportButton(String doku, AbstractListeControl control)
   {
     super("Export", new ExportAction(doku), control, false, "document-save.png",
-        "Ctrl+E");
+        "Ctrl+Shift+E");
   }
 }

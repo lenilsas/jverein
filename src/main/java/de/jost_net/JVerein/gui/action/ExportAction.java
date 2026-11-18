@@ -52,7 +52,8 @@ public class ExportAction implements Action
       {
 
         IJVereinPart tablePart = control.getTablePart();
-
+        // TODO Tablepart neu laden, oder nicht den TablePart sondern getList
+        // verwenden
         if (tablePart == null)
         {
           throw new ApplicationException(

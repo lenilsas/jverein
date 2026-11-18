@@ -30,6 +30,7 @@ import de.jost_net.JVerein.gui.control.BuchungsControl;
 import de.jost_net.JVerein.keys.Kontenfilter;
 import de.jost_net.JVerein.gui.control.BuchungsHeaderControl;
 import de.jost_net.JVerein.gui.dialogs.AbstractPartExportDialog.ExportArt;
+import de.jost_net.JVerein.gui.parts.ExportButton;
 import de.jost_net.JVerein.gui.parts.HelpButton;
 import de.jost_net.JVerein.gui.parts.NewButton;
 import de.jost_net.JVerein.gui.parts.ToolTipButton;
@@ -139,8 +140,7 @@ public class BuchungListeView extends AbstractView
             (DateInput) datumVon, (DateInput) datumBis));
     buttons.addButton("Import", new BuchungImportAction(), null, false,
         "file-import.png");
-    buttons.addButton(new Button("Export", new BuchungExportAction(), control,
-        false, "document-save.png"));
+    buttons.addButton(new ExportButton(DokumentationUtil.BUCHUNGEN, control));
     buttons.addButton(new NewButton(new BuchungNeuAction(control, null)));
     buttons.paint(this.getParent());
 
