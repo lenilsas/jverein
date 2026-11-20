@@ -17,11 +17,12 @@
 package de.jost_net.JVerein.gui.menu;
 
 import de.jost_net.JVerein.gui.action.EditAction;
+import de.jost_net.JVerein.gui.action.ExportAction;
 import de.jost_net.JVerein.gui.action.FormularAnzeigeAction;
 import de.jost_net.JVerein.gui.action.FormularDuplizierenAction;
-import de.jost_net.JVerein.gui.action.FormularExportAction;
 import de.jost_net.JVerein.gui.control.FormularControl;
 import de.jost_net.JVerein.gui.parts.JVereinTablePart;
+import de.jost_net.JVerein.gui.view.DokumentationUtil;
 import de.jost_net.JVerein.gui.view.FormularDetailView;
 import de.willuhn.jameica.gui.parts.CheckedSingleContextMenuItem;
 import de.willuhn.jameica.gui.parts.ContextMenu;
@@ -45,6 +46,6 @@ public class FormularMenu extends ContextMenu
         new FormularDuplizierenAction(control), "edit-copy.png"));
     addItem(new DeleteMenueItem());
     addItem(new CheckedSingleContextMenuItem("Exportieren",
-        new FormularExportAction(), "document-save.png"));
+        new ExportAction(DokumentationUtil.FORMULARE), "document-save.png"));
   }
 }

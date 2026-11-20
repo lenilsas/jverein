@@ -16,10 +16,10 @@
  **********************************************************************/
 package de.jost_net.JVerein.gui.view;
 
-import de.jost_net.JVerein.gui.action.SollbuchungExportAction;
 import de.jost_net.JVerein.gui.action.SollbuchungNeuAction;
 import de.jost_net.JVerein.gui.control.SollbuchungControl;
 import de.jost_net.JVerein.gui.dialogs.AbstractPartExportDialog.ExportArt;
+import de.jost_net.JVerein.gui.parts.ExportButton;
 import de.jost_net.JVerein.gui.parts.HelpButton;
 import de.jost_net.JVerein.gui.parts.NewButton;
 import de.jost_net.JVerein.gui.parts.ToolTipButton;
@@ -27,7 +27,6 @@ import de.jost_net.JVerein.keys.Filter;
 import de.willuhn.jameica.gui.AbstractView;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.input.Input;
-import de.willuhn.jameica.gui.parts.Button;
 import de.willuhn.jameica.gui.parts.ButtonArea;
 import de.willuhn.jameica.gui.util.ColumnLayout;
 import de.willuhn.jameica.gui.util.LabelGroup;
@@ -81,8 +80,8 @@ public class SollbuchungListeView extends AbstractView
     ButtonArea buttons = new ButtonArea();
     buttons
         .addButton(new HelpButton(DokumentationUtil.MITGLIEDSKONTO_UEBERSICHT));
-    buttons.addButton(new Button("Export", new SollbuchungExportAction(),
-        control, false, "document-save.png"));
+    buttons.addButton(
+        new ExportButton(DokumentationUtil.MITGLIEDSKONTO_UEBERSICHT, control));
     buttons.addButton(new NewButton(new SollbuchungNeuAction(null)));
     buttons.paint(this.getParent());
 

@@ -36,8 +36,8 @@ public abstract class KontenrahmenExport implements Exporter
   protected Integer jahr;
 
   @Override
-  public void doExport(Object[] objects, IOFormat format, File file,
-      ExportLayoutParam params, ProgressMonitor monitor)
+  public void doExport(Object[] objects, File file, ExportLayoutParam params,
+      ProgressMonitor monitor)
       throws ApplicationException, IOException
   {
     this.file = file;

@@ -23,22 +23,16 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
-import java.util.Map;
-
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 
 import de.jost_net.JVerein.Einstellungen;
 import de.jost_net.JVerein.Einstellungen.Property;
-import de.jost_net.JVerein.Queries.BuchungQuery;
-import de.jost_net.JVerein.gui.control.BuchungsControl;
 import de.jost_net.JVerein.gui.dialogs.AbstractPartExportDialog;
 import de.jost_net.JVerein.gui.dialogs.BuchungsjournalSortDialog;
 import de.jost_net.JVerein.gui.formatter.BuchungsartFormatter;
-import de.jost_net.JVerein.gui.view.AnlagenbuchungListeView;
-import de.jost_net.JVerein.gui.view.BuchungListeView;
 import de.jost_net.JVerein.keys.ArtBuchungsart;
-import de.jost_net.JVerein.keys.Filter;
+import de.jost_net.JVerein.keys.Kontoart;
 import de.jost_net.JVerein.keys.VorlageTyp;
 import de.jost_net.JVerein.rmi.Buchung;
 import de.jost_net.JVerein.util.JVDateFormatTTMMJJJJ;
@@ -63,15 +57,7 @@ public class BuchungsjournalExportPDF implements Exporter
   @Override
   public IOFormat[] getIOFormats(Class<?> objectType)
   {
-    if (objectType == BuchungListeView.class)
-    {
-      geldkonto = true;
-    }
-    else if (objectType == AnlagenbuchungListeView.class)
-    {
-      geldkonto = false;
-    }
-    else
+    if (!Buchung.class.isAssignableFrom(objectType))
     {
       return null;
     }
@@ -97,17 +83,19 @@ public class BuchungsjournalExportPDF implements Exporter
   }
 
   @Override
-  public String getDateiname(Object object)
+  public String getDateiname(Object object) throws RemoteException
   {
-    if (geldkonto)
-    {
-      return VorlageUtil.getName(VorlageTyp.BUCHUNGSJOURNAL_DATEINAME, object)
-          + ".pdf";
-    }
-    else
+    // TODO Ist Anlagenkontobestimmung so richtig?
+    if (object instanceof Buchung b
+        && b.getKonto().getKontoArt().equals(Kontoart.ANLAGE))
     {
       return VorlageUtil.getName(VorlageTyp.ANLAGEN_BUCHUNGSJOURNAL_DATEINAME,
           object) + ".pdf";
+    }
+    else
+    {
+      return VorlageUtil.getName(VorlageTyp.BUCHUNGSJOURNAL_DATEINAME, object)
+          + ".pdf";
     }
   }
 
@@ -124,17 +112,13 @@ public class BuchungsjournalExportPDF implements Exporter
   }
 
   @Override
-  public void doExport(Object[] objects, IOFormat format, File file,
-      ExportLayoutParam params, ProgressMonitor monitor)
+  public void doExport(Object[] objects, File file, ExportLayoutParam params,
+      ProgressMonitor monitor)
       throws RemoteException, ApplicationException, FileNotFoundException,
       DocumentException, IOException
   {
     this.params = params;
-    // objects[0] = control, objects[1] ist der Filtertext
-    BuchungsControl control = (BuchungsControl) objects[0];
-    @SuppressWarnings("unchecked")
-    Map<Filter, String> filterparams = (Map<Filter, String>) objects[1];
-    BuchungQuery query = control.getQuery();
+
     BuchungsjournalSortDialog djs = new BuchungsjournalSortDialog(
         BuchungsjournalSortDialog.POSITION_CENTER);
     String sort = null;
@@ -151,8 +135,8 @@ public class BuchungsjournalExportPDF implements Exporter
       throw new OperationCanceledException("Ausgabe abgebrochen");
     }
     if (sort != null)
-    {
-      query.setOrdername(sort);
+    {// TODO Sortierung
+     // query.setOrdername(sort);
     }
 
     FileOutputStream fos = new FileOutputStream(file);
@@ -165,87 +149,90 @@ public class BuchungsjournalExportPDF implements Exporter
 
     createTableHeader(reporter);
 
-    for (Buchung b : query.get())
+    for (Object o : objects)
     {
-      reporter.addColumn(b.getID(), Element.ALIGN_RIGHT,
-          params.getFontNormal());
-      reporter.addColumn(new JVDateFormatTTMMJJJJ().format(b.getDatum()),
-          Element.ALIGN_LEFT, params.getFontNormal());
-      reporter.addColumn(b.getKonto().getNummer(), Element.ALIGN_RIGHT,
-          params.getFontNormal());
-      if (b.getAuszugsnummer() != null)
+      if (o instanceof Buchung b)
       {
-        reporter.addColumn(
-            b.getAuszugsnummer() + "/"
-                + (b.getBlattnummer() != null ? b.getBlattnummer() : "-"),
+        reporter.addColumn(b.getID(), Element.ALIGN_RIGHT,
+            params.getFontNormal());
+        reporter.addColumn(new JVDateFormatTTMMJJJJ().format(b.getDatum()),
             Element.ALIGN_LEFT, params.getFontNormal());
-      }
-      else
-      {
-        reporter.addColumn("", Element.ALIGN_LEFT);
-      }
-      reporter.addColumn(b.getName(), Element.ALIGN_LEFT,
-          params.getFontNormal());
-      reporter.addColumn(b.getZweck(), Element.ALIGN_LEFT,
-          params.getFontNormal());
-      String buklaString = "-: ";
-      String buaString = "--";
-      if ((Boolean) Einstellungen
-          .getEinstellung(Property.BUCHUNGSKLASSEINBUCHUNG))
-      {
-        if (b.getBuchungsklasseId() != null)
+        reporter.addColumn(b.getKonto().getNummer(), Element.ALIGN_RIGHT,
+            params.getFontNormal());
+        if (b.getAuszugsnummer() != null)
         {
-          buklaString = b.getBuchungsklasse().getNummer() + ": ";
+          reporter.addColumn(
+              b.getAuszugsnummer() + "/"
+                  + (b.getBlattnummer() != null ? b.getBlattnummer() : "-"),
+              Element.ALIGN_LEFT, params.getFontNormal());
         }
-      }
-      else
-      {
-        if (b.getBuchungsartId() != null
-            && b.getBuchungsart().getBuchungsklasseId() != null)
+        else
         {
-          buklaString = b.getBuchungsart().getBuchungsklasse().getNummer()
-              + ": ";
+          reporter.addColumn("", Element.ALIGN_LEFT);
         }
-      }
-      if (b.getBuchungsartId() != null)
-      {
-        buaString = new BuchungsartFormatter().format(b.getBuchungsart());
-      }
-      reporter.addColumn(buklaString + buaString, Element.ALIGN_LEFT,
-          params.getFontNormal());
-      reporter.addColumn(b.getBetrag(), params.getFontNormal(),
-          params.getNegativRot());
-      if ((Boolean) Einstellungen.getEinstellung(Property.STEUERINBUCHUNG))
-      {
-        reporter.addColumn(
-            b.getSteuer() == null ? null : b.getSteuer().getSatz(),
-            params.getFontNormal(), params.getNegativRot());
-      }
-      if (b.getBuchungsart() != null)
-      {
-        int buchungsartart = b.getBuchungsart().getArt();
-        switch (buchungsartart)
+        reporter.addColumn(b.getName(), Element.ALIGN_LEFT,
+            params.getFontNormal());
+        reporter.addColumn(b.getZweck(), Element.ALIGN_LEFT,
+            params.getFontNormal());
+        String buklaString = "-: ";
+        String buaString = "--";
+        if ((Boolean) Einstellungen
+            .getEinstellung(Property.BUCHUNGSKLASSEINBUCHUNG))
         {
-          case ArtBuchungsart.EINNAHME:
+          if (b.getBuchungsklasseId() != null)
           {
-            einnahmen = einnahmen.add(b.getBetrag());
-            break;
-          }
-          case ArtBuchungsart.AUSGABE:
-          {
-            ausgaben = ausgaben.add(b.getBetrag());
-            break;
-          }
-          case ArtBuchungsart.UMBUCHUNG:
-          {
-            umbuchungen = umbuchungen.add(b.getBetrag());
-            break;
+            buklaString = b.getBuchungsklasse().getNummer() + ": ";
           }
         }
-      }
-      else
-      {
-        nichtzugeordnet = nichtzugeordnet.add(b.getBetrag());
+        else
+        {
+          if (b.getBuchungsartId() != null
+              && b.getBuchungsart().getBuchungsklasseId() != null)
+          {
+            buklaString = b.getBuchungsart().getBuchungsklasse().getNummer()
+                + ": ";
+          }
+        }
+        if (b.getBuchungsartId() != null)
+        {
+          buaString = new BuchungsartFormatter().format(b.getBuchungsart());
+        }
+        reporter.addColumn(buklaString + buaString, Element.ALIGN_LEFT,
+            params.getFontNormal());
+        reporter.addColumn(b.getBetrag(), params.getFontNormal(),
+            params.getNegativRot());
+        if ((Boolean) Einstellungen.getEinstellung(Property.STEUERINBUCHUNG))
+        {
+          reporter.addColumn(
+              b.getSteuer() == null ? null : b.getSteuer().getSatz(),
+              params.getFontNormal(), params.getNegativRot());
+        }
+        if (b.getBuchungsart() != null)
+        {
+          int buchungsartart = b.getBuchungsart().getArt();
+          switch (buchungsartart)
+          {
+            case ArtBuchungsart.EINNAHME:
+            {
+              einnahmen = einnahmen.add(b.getBetrag());
+              break;
+            }
+            case ArtBuchungsart.AUSGABE:
+            {
+              ausgaben = ausgaben.add(b.getBetrag());
+              break;
+            }
+            case ArtBuchungsart.UMBUCHUNG:
+            {
+              umbuchungen = umbuchungen.add(b.getBetrag());
+              break;
+            }
+          }
+        }
+        else
+        {
+          nichtzugeordnet = nichtzugeordnet.add(b.getBetrag());
+        }
       }
     }
 
@@ -297,7 +284,9 @@ public class BuchungsjournalExportPDF implements Exporter
     reporter.closeTable();
     if (params.getFilterParameter())
     {
-      reporter.addParams(filterparams, params);
+      // TODO Woher Filterparameter holen?
+      // Map<Filter, String> filterparams = (Map<Filter, String>) objects[1];
+      // reporter.addParams(filterparams, params);
     }
     reporter.close();
     fos.close();

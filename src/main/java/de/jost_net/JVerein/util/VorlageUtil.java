@@ -39,7 +39,6 @@ import de.jost_net.JVerein.gui.control.AbstractSaldoControl;
 import de.jost_net.JVerein.gui.control.AuswertungControl;
 import de.jost_net.JVerein.gui.control.FilterControl;
 import de.jost_net.JVerein.gui.control.JahresabschlussDetailControl;
-import de.jost_net.JVerein.gui.control.WirtschaftsplanDetailControl;
 import de.jost_net.JVerein.io.AbrechnungSEPAParam;
 import de.jost_net.JVerein.io.VelocityTool;
 import de.jost_net.JVerein.io.Zeichen;
@@ -53,6 +52,7 @@ import de.jost_net.JVerein.rmi.Beleg;
 import de.jost_net.JVerein.rmi.Rechnung;
 import de.jost_net.JVerein.rmi.Spendenbescheinigung;
 import de.jost_net.JVerein.rmi.Vorlage;
+import de.jost_net.JVerein.rmi.Wirtschaftsplan;
 import de.jost_net.JVerein.server.IMitglied;
 import de.willuhn.datasource.rmi.DBIterator;
 import de.willuhn.logging.Logger;
@@ -306,8 +306,8 @@ public class VorlageUtil
         case WIRTSCHAFTSPLAN_DATEINAME:
         case WIRTSCHAFTSPLAN_TITEL:
         case WIRTSCHAFTSPLAN_SUBTITEL:
-          map = new WirtschaftsplanParameterMap()
-              .getMap((WirtschaftsplanDetailControl) obj, map);
+          map = new WirtschaftsplanParameterMap().getMap((Wirtschaftsplan) obj,
+              map);
           break;
         case SPENDENBESCHEINIGUNG_DATEINAME:
         case RECHNUNG_DATEINAME:

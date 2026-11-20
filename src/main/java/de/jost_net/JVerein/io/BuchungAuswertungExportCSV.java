@@ -22,7 +22,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.rmi.RemoteException;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.supercsv.cellprocessor.ift.CellProcessor;
@@ -32,24 +32,17 @@ import org.supercsv.prefs.CsvPreference;
 
 import com.itextpdf.text.DocumentException;
 
-import de.jost_net.JVerein.Einstellungen;
-import de.jost_net.JVerein.Queries.BuchungQuery;
 import de.jost_net.JVerein.Variable.BuchungMap;
-import de.jost_net.JVerein.gui.control.BuchungsControl;
 import de.jost_net.JVerein.gui.dialogs.AbstractPartExportDialog;
-import de.jost_net.JVerein.gui.view.AnlagenbuchungListeView;
-import de.jost_net.JVerein.gui.view.BuchungListeView;
+import de.jost_net.JVerein.keys.Kontoart;
 import de.jost_net.JVerein.keys.VorlageTyp;
 import de.jost_net.JVerein.rmi.Buchung;
 import de.jost_net.JVerein.util.VorlageUtil;
-import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.ProgressMonitor;
 
 public class BuchungAuswertungExportCSV implements Exporter
 {
-  boolean geldkonto;
-
   @Override
   public String getName()
   {
@@ -59,15 +52,7 @@ public class BuchungAuswertungExportCSV implements Exporter
   @Override
   public IOFormat[] getIOFormats(Class<?> objectType)
   {
-    if (objectType == BuchungListeView.class)
-    {
-      geldkonto = true;
-    }
-    else if (objectType == AnlagenbuchungListeView.class)
-    {
-      geldkonto = false;
-    }
-    else
+    if (!Buchung.class.isAssignableFrom(objectType))
     {
       return null;
     }
@@ -93,62 +78,52 @@ public class BuchungAuswertungExportCSV implements Exporter
   }
 
   @Override
-  public String getDateiname(Object object)
+  public String getDateiname(Object object) throws RemoteException
   {
-    if (geldkonto)
-    {
-      return VorlageUtil.getName(VorlageTyp.CSVBUCHUNGEN_DATEINAME, object)
-          + ".csv";
-    }
-    else
+    // TODO Ist Anlagenkontobestimmung so richtig?
+    if (object instanceof Buchung b
+        && b.getKonto().getKontoArt().equals(Kontoart.ANLAGE))
     {
       return VorlageUtil.getName(VorlageTyp.ANLAGEN_CSVBUCHUNGEN_DATEINAME,
           object) + ".csv";
     }
+    else
+    {
+      return VorlageUtil.getName(VorlageTyp.CSVBUCHUNGEN_DATEINAME, object)
+          + ".csv";
+    }
   }
 
   @Override
-  public void doExport(Object[] objects, IOFormat format, File file,
-      ExportLayoutParam params, ProgressMonitor monitor)
+  public void doExport(Object[] objects, File file, ExportLayoutParam params,
+      ProgressMonitor monitor)
       throws RemoteException, ApplicationException, FileNotFoundException,
       DocumentException, IOException
   {
-    BuchungsControl control = (BuchungsControl) objects[0];
-    BuchungQuery query = control.getQuery();
-    final List<Buchung> buchungen = query.get();
-
     ICsvMapWriter writer = new CsvMapWriter(new FileWriter(file),
         CsvPreference.EXCEL_NORTH_EUROPE_PREFERENCE);
 
     String[] header = createHeader();
 
-    Buchung bu = (Buchung) Einstellungen.getDBService()
-        .createObject(Buchung.class, null);
-    Map<String, Object> map = new BuchungMap().getMap(bu, null);
+    Map<String, Object> map = BuchungMap.getDummyMap(new HashMap<>());
     CellProcessor[] processors = CellProcessors.createCellProcessors(map);
 
     writer.writeHeader(header);
 
-    for (Buchung b : buchungen)
+    for (Object o : objects)
     {
-      writer.write(new BuchungMap().getMap(b, null), header, processors);
+      if (o instanceof Buchung b)
+      {
+        writer.write(new BuchungMap().getMap(b, null), header, processors);
+      }
     }
     writer.close();
   }
 
   private String[] createHeader()
   {
-    try
-    {
-      Buchung b = (Buchung) Einstellungen.getDBService()
-          .createObject(Buchung.class, null);
-      return new BuchungMap().getMap(b, null).keySet().toArray(new String[0]);
-    }
-    catch (RemoteException e)
-    {
-      Logger.error("Fehler", e);
-    }
-    return null;
+    return BuchungMap.getDummyMap(new HashMap<>()).keySet()
+        .toArray(new String[0]);
   }
 
   @Override

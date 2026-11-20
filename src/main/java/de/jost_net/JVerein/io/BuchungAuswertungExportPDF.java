@@ -18,14 +18,13 @@ import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import de.jost_net.JVerein.Einstellungen;
 import de.jost_net.JVerein.Einstellungen.Property;
-import de.jost_net.JVerein.Queries.BuchungQuery;
 import de.jost_net.JVerein.rmi.Buchung;
 import de.jost_net.JVerein.rmi.Buchungsart;
 import de.jost_net.JVerein.rmi.Buchungsklasse;
-import de.willuhn.datasource.rmi.DBIterator;
 
 public abstract class BuchungAuswertungExportPDF implements Exporter
 {
@@ -39,80 +38,92 @@ public abstract class BuchungAuswertungExportPDF implements Exporter
 
   protected boolean kontonummer_in_buchungsliste = false;
 
-  protected ArrayList<Buchungsart> getBuchungsarten(BuchungQuery query)
+  protected List<Buchungsart> getBuchungsarten(Object[] objects)
       throws RemoteException
   {
-    ArrayList<Buchungsart> buchungsarten = new ArrayList<>();
-    if (!(query.getBuchungsart() != null
-        && query.getBuchungsart().getID() == null))
+    List<Buchungsart> buchungsarten = new ArrayList<>();
+
+    for (Object obj : objects)
     {
-      DBIterator<Buchungsart> list = Einstellungen.getDBService()
-          .createList(Buchungsart.class);
-      if (query.getBuchungsart() != null
-          && query.getBuchungsart().getID() != null)
+      Buchungsart art = ((Buchung) obj).getBuchungsart();
+
+      if (art == null)
       {
-        list.addFilter("id = ?",
-            new Object[] { query.getBuchungsart().getID() });
+        continue;
       }
 
-      list.setOrder("ORDER BY nummer");
-
-      while (list.hasNext())
+      boolean vorhanden = false;
+      for (Buchungsart x : buchungsarten)
       {
-        buchungsarten.add(list.next());
+        if (Objects.equals(x.getID(), art.getID()))
+        {
+          vorhanden = true;
+          break;
+        }
+      }
+
+      if (!vorhanden)
+      {
+        buchungsarten.add(art);
       }
     }
     return buchungsarten;
   }
 
-  protected List<Buchung> getBuchungenEinerBuchungsart(List<Buchung> buchungen,
+  protected List<Buchung> getBuchungenEinerBuchungsart(Object[] buchungen,
       Buchungsart bua, Buchungsklasse bukla) throws RemoteException
   {
     List<Buchung> liste = new ArrayList<>();
-    for (Buchung b : buchungen)
+    for (Object o : buchungen)
     {
-      if (b.getBuchungsart() == null
-          || !b.getBuchungsart().getNummer().equals(bua.getNummer()))
+      if (o instanceof Buchung b)
       {
-        continue;
-      }
-
-      if ((Boolean) Einstellungen
-          .getEinstellung(Property.BUCHUNGSKLASSEINBUCHUNG))
-      {
-        if (b.getBuchungsklasseId() == null
-            || !b.getBuchungsklasse().getNummer().equals(bukla.getNummer()))
+        if (b.getBuchungsart() == null
+            || !b.getBuchungsart().getNummer().equals(bua.getNummer()))
         {
           continue;
         }
+
+        if ((Boolean) Einstellungen
+            .getEinstellung(Property.BUCHUNGSKLASSEINBUCHUNG))
+        {
+          if (b.getBuchungsklasseId() == null
+              || !b.getBuchungsklasse().getNummer().equals(bukla.getNummer()))
+          {
+            continue;
+          }
+        }
+        liste.add(b);
       }
-      liste.add(b);
     }
     return liste;
   }
 
   // Buchungen einer Buchungsart ohne Buchungsklasse
-  protected List<Buchung> getBuchungenEinerBuchungsart(List<Buchung> buchungen,
+  protected List<Buchung> getBuchungenEinerBuchungsart(Object[] buchungen,
       Buchungsart bua) throws RemoteException
   {
     List<Buchung> liste = new ArrayList<>();
-    for (Buchung b : buchungen)
+    for (Object o : buchungen)
     {
-      if (b.getBuchungsart() == null
-          || !b.getBuchungsart().getNummer().equals(bua.getNummer()))
+      if (o instanceof Buchung b)
       {
-        continue;
-      }
-
-      if ((Boolean) Einstellungen
-          .getEinstellung(Property.BUCHUNGSKLASSEINBUCHUNG))
-      {
-        if (b.getBuchungsklasseId() != null)
+        if (b.getBuchungsart() == null
+            || !b.getBuchungsart().getNummer().equals(bua.getNummer()))
         {
           continue;
         }
+
+        if ((Boolean) Einstellungen
+            .getEinstellung(Property.BUCHUNGSKLASSEINBUCHUNG))
+        {
+          if (b.getBuchungsklasseId() != null)
+          {
+            continue;
+          }
+        }
+        liste.add(b);
       }
-      liste.add(b);
     }
     return liste;
   }

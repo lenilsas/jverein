@@ -57,7 +57,7 @@ public class KontenrahmenExportXML extends KontenrahmenExport
   @Override
   public IOFormat[] getIOFormats(Class<?> objectType)
   {
-    if (objectType != Buchungsklasse.class)
+    if (!objectType.isAssignableFrom(Buchungsklasse.class))
     {
       return null;
     }

@@ -59,8 +59,8 @@ public class BelegExport implements Exporter
   }
 
   @Override
-  public void doExport(Object[] objects, IOFormat format, File file,
-      ExportLayoutParam params, ProgressMonitor monitor)
+  public void doExport(Object[] objects, File file, ExportLayoutParam params,
+      ProgressMonitor monitor)
       throws RemoteException, ApplicationException, FileNotFoundException,
       DocumentException, IOException
   {

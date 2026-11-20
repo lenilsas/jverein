@@ -17,14 +17,20 @@
 
 package de.jost_net.JVerein.io;
 
+import java.io.File;
 import java.io.FileWriter;
-import java.util.ArrayList;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.supercsv.cellprocessor.ift.CellProcessor;
 import org.supercsv.io.CsvMapWriter;
 import org.supercsv.io.ICsvMapWriter;
 import org.supercsv.prefs.CsvPreference;
+
+import com.itextpdf.text.DocumentException;
 
 import de.jost_net.JVerein.Einstellungen;
 import de.jost_net.JVerein.Variable.MitgliedMap;
@@ -36,12 +42,11 @@ import de.jost_net.JVerein.rmi.Mitglied;
 import de.jost_net.JVerein.rmi.Sollbuchung;
 import de.jost_net.JVerein.util.VorlageUtil;
 import de.willuhn.logging.Logger;
+import de.willuhn.util.ApplicationException;
 import de.willuhn.util.ProgressMonitor;
 
-public class SollbuchungExportCSV extends SollbuchungExport
+public class SollbuchungExportCSV implements Exporter
 {
-
-  private ArrayList<Sollbuchung> sollbuchungen = null;
 
   @Override
   public String getName()
@@ -52,7 +57,7 @@ public class SollbuchungExportCSV extends SollbuchungExport
   @Override
   public IOFormat[] getIOFormats(Class<?> objectType)
   {
-    if (objectType != Sollbuchung.class)
+    if (!Sollbuchung.class.isAssignableFrom(objectType))
     {
       return null;
     }
@@ -78,36 +83,17 @@ public class SollbuchungExportCSV extends SollbuchungExport
   }
 
   @Override
-  protected void open()
-  {
-    sollbuchungen = new ArrayList<>();
-  }
-
-  @Override
-  protected void startMitglied(Mitglied m)
-  {
-    //
-  }
-
-  @Override
-  protected void endeMitglied()
-  {
-    //
-  }
-
-  @Override
-  protected void add(Sollbuchung sollb)
-  {
-    sollbuchungen.add(sollb);
-  }
-
-  @Override
-  protected void close(ProgressMonitor monitor)
+  public void doExport(final Object[] objects, File file, ExportLayoutParam params,
+      ProgressMonitor monitor)
+      throws DocumentException, IOException, ApplicationException
   {
     try
     {
       ICsvMapWriter writer = new CsvMapWriter(new FileWriter(file),
           CsvPreference.EXCEL_NORTH_EUROPE_PREFERENCE);
+
+      List<Sollbuchung> sollbuchungen = Arrays.stream(objects)
+          .map(Sollbuchung.class::cast).collect(Collectors.toList());
 
       Mitglied m = null;
       Sollbuchung sollb = null;

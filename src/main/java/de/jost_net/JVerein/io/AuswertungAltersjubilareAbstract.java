@@ -49,8 +49,8 @@ public abstract class AuswertungAltersjubilareAbstract implements Exporter
 
   @SuppressWarnings("unchecked")
   @Override
-  public void doExport(Object[] objects, IOFormat format, File file,
-      ExportLayoutParam params, ProgressMonitor monitor)
+  public void doExport(Object[] objects, File file, ExportLayoutParam params,
+      ProgressMonitor monitor)
       throws ApplicationException, DocumentException, IOException
   {
     /*

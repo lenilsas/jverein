@@ -17,9 +17,10 @@
 package de.jost_net.JVerein.gui.menu;
 
 import de.jost_net.JVerein.gui.action.EditAction;
+import de.jost_net.JVerein.gui.action.ExportAction;
 import de.jost_net.JVerein.gui.action.WirtschaftsplanDuplizierenAction;
-import de.jost_net.JVerein.gui.action.WirtschaftsplanExportAction;
 import de.jost_net.JVerein.gui.parts.JVereinTablePart;
+import de.jost_net.JVerein.gui.view.DokumentationUtil;
 import de.jost_net.JVerein.gui.view.WirtschaftsplanDetailView;
 import de.willuhn.jameica.gui.parts.CheckedContextMenuItem;
 import de.willuhn.jameica.gui.parts.ContextMenu;
@@ -37,6 +38,7 @@ public class WirtschaftsplanListMenu extends ContextMenu
     addItem(new DeleteMenueItem());
     addItem(ContextMenuItem.SEPARATOR);
     addItem(new CheckedContextMenuItem("Export",
-        new WirtschaftsplanExportAction(null), "document-save.png"));
+        new ExportAction(DokumentationUtil.WIRTSCHAFTSPLANUNG),
+        "document-save.png"));
   }
 }

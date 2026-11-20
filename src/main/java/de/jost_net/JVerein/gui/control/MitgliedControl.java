@@ -27,7 +27,6 @@ import de.jost_net.JVerein.Queries.MitgliedQuery.MitgliedAuswahl;
 import de.jost_net.JVerein.gui.action.EditAction;
 import de.jost_net.JVerein.gui.action.MitgliedDetailAction;
 import de.jost_net.JVerein.gui.action.NichtMitgliedDetailAction;
-import de.jost_net.JVerein.gui.dialogs.ExportDialog;
 import de.jost_net.JVerein.gui.formatter.IBANFormatter;
 import de.jost_net.JVerein.gui.formatter.JaNeinFormatter;
 import de.jost_net.JVerein.gui.formatter.PersonenartFormatter;
@@ -36,13 +35,13 @@ import de.jost_net.JVerein.gui.formatter.ZahlungsrhythmusFormatter;
 import de.jost_net.JVerein.gui.formatter.ZahlungsterminFormatter;
 import de.jost_net.JVerein.gui.formatter.ZahlungswegFormatter;
 import de.jost_net.JVerein.gui.menu.MitgliedMenu;
+import de.jost_net.JVerein.gui.parts.ExportButton;
 import de.jost_net.JVerein.gui.parts.JVereinTablePart;
 import de.jost_net.JVerein.gui.parts.NaturalOrderColumn;
 import de.jost_net.JVerein.gui.view.DokumentationUtil;
 import de.jost_net.JVerein.gui.view.MitgliedDetailView;
 import de.jost_net.JVerein.gui.view.MitgliedListeView;
 import de.jost_net.JVerein.gui.view.NichtMitgliedDetailView;
-import de.jost_net.JVerein.gui.view.NichtMitgliedListeView;
 import de.jost_net.JVerein.keys.Datentyp;
 import de.jost_net.JVerein.keys.Filter;
 import de.jost_net.JVerein.keys.VorlageTyp;
@@ -64,7 +63,6 @@ import de.willuhn.jameica.gui.input.Input;
 import de.willuhn.jameica.gui.input.SelectInput;
 import de.willuhn.jameica.gui.parts.Button;
 import de.willuhn.jameica.gui.parts.Column;
-import de.willuhn.jameica.system.OperationCanceledException;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 
@@ -91,62 +89,9 @@ public class MitgliedControl extends FilterControl
 
   public Button getExportButton()
   {
-    @SuppressWarnings("unchecked")
-    Button b = new Button("Export", context -> {
-      try
-      {
-        saveFilterSettings();
-        Mitgliedstyp mitgliedstyp;
-        ExportDialog d;
-        refresh();
-        ArrayList<Mitglied> list = (ArrayList<Mitglied>) getTablePart()
-            .getItems();
-        if (mitgliedAuswahl == MitgliedAuswahl.MITGLIEDER)
-        {
-          mitgliedstyp = Einstellungen.getDBService()
-              .createObject(Mitgliedstyp.class, Mitgliedstyp.MITGLIED);
-        }
-        else
-        {
-          mitgliedstyp = (Mitgliedstyp) getFilter().get(Filter.MITGLIEDSTYP);
-        }
-        Object[] objects = new Object[] { list, getFilterText(false),
-            mitgliedstyp, getFilter() };
-        /*
-         * objects[0] ist ArrayList<Mitglied>, objects[1] ist der Filtertext,
-         * objects[2] ist Mitgliedstyp, objects[3] ist der Filter
-         */
-        if (mitgliedAuswahl == MitgliedAuswahl.MITGLIEDER)
-        {
-          d = new ExportDialog(objects, MitgliedListeView.class,
-              DokumentationUtil.MITGLIEDSUCHE, this);
-        }
-        else
-        {
-          d = new ExportDialog(objects, NichtMitgliedListeView.class,
-              DokumentationUtil.ADRESSEN, this);
-        }
-        d.open();
-      }
-      catch (OperationCanceledException oce)
-      {
-        throw oce;
-      }
-      catch (RemoteException e)
-      {
-        throw new ApplicationException(e);
-      }
-      catch (ApplicationException ae)
-      {
-        throw ae;
-      }
-      catch (Exception e)
-      {
-        Logger.error("Fehler", e);
-        throw new ApplicationException("Fehler beim exportieren des Reports");
-      }
-    }, null, false, "document-save.png");
-    return b;
+    return new ExportButton(mitgliedAuswahl == MitgliedAuswahl.MITGLIEDER
+        ? DokumentationUtil.MITGLIEDSUCHE
+        : DokumentationUtil.ADRESSEN, control);
   }
 
   @Override

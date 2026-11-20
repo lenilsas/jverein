@@ -22,13 +22,13 @@ import org.eclipse.swt.widgets.TabFolder;
 
 import de.jost_net.JVerein.Einstellungen;
 import de.jost_net.JVerein.Einstellungen.Property;
-import de.jost_net.JVerein.gui.action.AnlagenbuchungExportAction;
 import de.jost_net.JVerein.gui.action.AnlagenbuchungImportAction;
 import de.jost_net.JVerein.gui.action.BuchungNeuAction;
 import de.jost_net.JVerein.gui.control.BuchungsControl;
 import de.jost_net.JVerein.keys.Kontenfilter;
 import de.jost_net.JVerein.gui.control.BuchungsHeaderControl;
 import de.jost_net.JVerein.gui.dialogs.AbstractPartExportDialog.ExportArt;
+import de.jost_net.JVerein.gui.parts.ExportButton;
 import de.jost_net.JVerein.gui.parts.HelpButton;
 import de.jost_net.JVerein.gui.parts.NewButton;
 import de.jost_net.JVerein.gui.parts.ToolTipButton;
@@ -37,7 +37,6 @@ import de.willuhn.jameica.gui.AbstractView;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.input.Input;
 import de.willuhn.jameica.gui.input.LabelInput;
-import de.willuhn.jameica.gui.parts.Button;
 import de.willuhn.jameica.gui.parts.ButtonArea;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.ColumnLayout;
@@ -124,8 +123,8 @@ public class AnlagenbuchungListeView extends AbstractView
       buttons.addButton(control.getAfaButton());
     buttons.addButton("Import", new AnlagenbuchungImportAction(), null, false,
         "file-import.png");
-    buttons.addButton(new Button("Export", new AnlagenbuchungExportAction(),
-        control, false, "document-save.png"));
+    buttons.addButton(
+        new ExportButton(DokumentationUtil.ANLAGENBUCHUNGEN, control));
     buttons.addButton(new NewButton(new BuchungNeuAction(control, null)));
     buttons.paint(this.getParent());
 

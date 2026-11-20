@@ -54,8 +54,8 @@ public abstract class AuswertungJahrgangsstatistikAbstract implements Exporter
 
   @SuppressWarnings("unchecked")
   @Override
-  public void doExport(final Object[] objects, IOFormat format, File file,
-      ExportLayoutParam params, ProgressMonitor monitor)
+  public void doExport(final Object[] objects, File file, ExportLayoutParam params,
+      ProgressMonitor monitor)
       throws ApplicationException, DocumentException, IOException
   {
     /*

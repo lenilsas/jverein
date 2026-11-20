@@ -23,6 +23,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -65,7 +66,7 @@ public class WirtschaftsplanExporterPDF implements Exporter
   @Override
   public IOFormat[] getIOFormats(Class<?> objectType)
   {
-    if (objectType != Wirtschaftsplan.class)
+    if (!Wirtschaftsplan.class.isAssignableFrom(objectType))
     {
       return null;
     }
@@ -93,32 +94,21 @@ public class WirtschaftsplanExporterPDF implements Exporter
   @Override
   public String getDateiname(Object object)
   {
-    return VorlageUtil
-        .getName(object == null ? VorlageTyp.WIRTSCHAFTSPLAN_MEHRERE_DATEINAME
-            : VorlageTyp.WIRTSCHAFTSPLAN_DATEINAME, object)
-        + ".pdf";
+    return VorlageUtil.getName(object instanceof Object[]
+        ? VorlageTyp.WIRTSCHAFTSPLAN_MEHRERE_DATEINAME
+        : VorlageTyp.WIRTSCHAFTSPLAN_DATEINAME, object) + ".pdf";
   }
 
   @Override
-  public void doExport(Object[] objects, IOFormat format, File file,
-      ExportLayoutParam params, ProgressMonitor monitor)
+  public void doExport(Object[] objects, File file, ExportLayoutParam params,
+      ProgressMonitor monitor)
       throws RemoteException, ApplicationException, FileNotFoundException,
       DocumentException, IOException
   {
-    Wirtschaftsplan[] wirtschaftsplaene;
-    if (objects[0] instanceof Wirtschaftsplan[])
-    {
-      wirtschaftsplaene = (Wirtschaftsplan[]) objects[0];
-    }
-    else if (objects[0] instanceof Wirtschaftsplan)
-    {
-      wirtschaftsplaene = new Wirtschaftsplan[] {
-          (Wirtschaftsplan) objects[0] };
-    }
-    else
-    {
-      throw new ApplicationException("Keine Pläne ausgewählt");
-    }
+    Wirtschaftsplan[] wirtschaftsplaene = Arrays.stream(objects)
+        .filter(Wirtschaftsplan.class::isInstance)
+        .map(Wirtschaftsplan.class::cast).toArray(Wirtschaftsplan[]::new);
+
     this.params = params;
     FileOutputStream fos = new FileOutputStream(file);
 
@@ -499,17 +489,19 @@ public class WirtschaftsplanExporterPDF implements Exporter
   @Override
   public String getTitle(Object object)
   {
-    return VorlageUtil
-        .getName(object == null ? VorlageTyp.WIRTSCHAFTSPLAN_MEHRERE_TITEL
-            : VorlageTyp.WIRTSCHAFTSPLAN_TITEL, object);
+    return VorlageUtil.getName(
+        object instanceof Object[] ? VorlageTyp.WIRTSCHAFTSPLAN_MEHRERE_TITEL
+            : VorlageTyp.WIRTSCHAFTSPLAN_TITEL,
+        object);
   }
 
   @Override
   public String getSubtitle(Object object)
   {
-    return VorlageUtil
-        .getName(object == null ? VorlageTyp.WIRTSCHAFTSPLAN_MEHRERE_SUBTITEL
-            : VorlageTyp.WIRTSCHAFTSPLAN_SUBTITEL, object);
+    return VorlageUtil.getName(
+        object instanceof Object[] ? VorlageTyp.WIRTSCHAFTSPLAN_MEHRERE_SUBTITEL
+            : VorlageTyp.WIRTSCHAFTSPLAN_SUBTITEL,
+        object);
   }
 
   @Override

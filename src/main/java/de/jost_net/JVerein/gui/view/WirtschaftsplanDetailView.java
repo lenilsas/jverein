@@ -17,12 +17,12 @@
 package de.jost_net.JVerein.gui.view;
 
 import de.jost_net.JVerein.Einstellungen;
-import de.jost_net.JVerein.gui.action.WirtschaftsplanExportAction;
 import de.jost_net.JVerein.gui.control.Savable;
 import de.jost_net.JVerein.gui.control.WirtschaftsplanDetailControl;
 import de.jost_net.JVerein.gui.menu.WirtschaftsplanMenu;
 import de.jost_net.JVerein.gui.parts.ButtonAreaRtoL;
 import de.jost_net.JVerein.gui.parts.EditTreePart;
+import de.jost_net.JVerein.gui.parts.ExportButton;
 import de.jost_net.JVerein.gui.parts.HelpButton;
 import de.jost_net.JVerein.gui.parts.SaveButton;
 import de.jost_net.JVerein.gui.parts.SaveNeuButton;
@@ -90,8 +90,8 @@ public class WirtschaftsplanDetailView extends AbstractDetailView
     buttons.addButton(control.getInfoButton());
     buttons.addButton(control.getVorButton());
 
-    buttons.addButton("Export", new WirtschaftsplanExportAction(control),
-        getCurrentObject(), false, "document-save.png");
+    buttons.addButton(new ExportButton(DokumentationUtil.WIRTSCHAFTSPLANUNG,
+        getCurrentObject()));
     buttons.addButton(new SaveButton(control));
     buttons.addButton(new SaveNeuButton(control));
     buttons.paint(this.getParent());

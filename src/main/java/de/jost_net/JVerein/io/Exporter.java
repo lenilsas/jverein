@@ -47,8 +47,6 @@ public interface Exporter extends IO
    * 
    * @param objects
    *          die zu exportierenden Objekte.
-   * @param format
-   *          das vom User ausgewaehlte Export-Format.
    * @param file
    *          File-Object für die Ausgabe. Der Exporter muss die Datei selbe
    *          erstellen und schliessen!
@@ -58,15 +56,17 @@ public interface Exporter extends IO
    * @throws RemoteException
    * @throws ApplicationException
    */
-  public void doExport(Object[] objects, IOFormat format, File file,
-      ExportLayoutParam params, ProgressMonitor monitor)
+  public void doExport(Object[] objects, File file, ExportLayoutParam params,
+      ProgressMonitor monitor)
       throws RemoteException, ApplicationException, FileNotFoundException,
       DocumentException, IOException;
 
   /**
    * Dateiname für Report generieren
+   * 
+   * @throws RemoteException
    */
-  public String getDateiname(Object object);
+  public String getDateiname(Object object) throws RemoteException;
 
   /**
    * Titel für Report generieren

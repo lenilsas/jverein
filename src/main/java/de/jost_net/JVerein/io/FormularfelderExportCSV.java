@@ -23,10 +23,10 @@
  **********************************************************************/
 package de.jost_net.JVerein.io;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,15 +41,17 @@ import de.jost_net.JVerein.keys.VorlageTyp;
 import de.jost_net.JVerein.rmi.Formular;
 import de.jost_net.JVerein.rmi.Formularfeld;
 import de.jost_net.JVerein.util.VorlageUtil;
+import de.willuhn.datasource.GenericIterator;
+import de.willuhn.logging.Logger;
+import de.willuhn.util.ApplicationException;
+import de.willuhn.util.ProgressMonitor;
 
-public class FormularfelderExportCSV extends FormularfelderExport
+public class FormularfelderExportCSV implements Exporter
 {
 
   private ICsvMapWriter writer;
 
   private String[] header;
-
-  private ArrayList<Formularfeld> formularfelder;
 
   @Override
   public String getName()
@@ -60,7 +62,7 @@ public class FormularfelderExportCSV extends FormularfelderExport
   @Override
   public IOFormat[] getIOFormats(Class<?> objectType)
   {
-    if (objectType != Formularfeld.class)
+    if (!Formular.class.isAssignableFrom(objectType))
     {
       return null;
     }
@@ -86,29 +88,12 @@ public class FormularfelderExportCSV extends FormularfelderExport
   }
 
   @Override
-  public String getDateiname(Object object)
+  public void doExport(Object[] objects, File file, ExportLayoutParam params,
+      ProgressMonitor monitor)
+      throws ApplicationException, DocumentException, IOException
   {
-    try
-    {
-      return VorlageUtil.getName(VorlageTyp.FORMULARFELDER_DATEINAME,
-          ((Formular) object).getBezeichnung()) + ".csv";
-    }
-    catch (RemoteException e)
-    {
-      return "Formularfelder.csv";
-    }
-  }
+    Logger.debug(String.format("Formularfelder Export"));
 
-  @Override
-  protected void add(Formularfeld ff)
-  {
-    formularfelder.add(ff);
-  }
-
-  @Override
-  protected void open() throws DocumentException
-  {
-    formularfelder = new ArrayList<>();
     try
     {
       writer = new CsvMapWriter(new FileWriter(file),
@@ -121,14 +106,19 @@ public class FormularfelderExportCSV extends FormularfelderExport
     {
       throw new DocumentException(e);
     }
-  }
 
-  @Override
-  protected void close() throws IOException, DocumentException
-  {
-    Map<String, Object> ffmap = new HashMap<>();
-    for (Formularfeld ff : formularfelder)
+    if (objects.length > 1)
     {
+      throw new ApplicationException(
+          "Nur Export der Formularfelder von einem Formular möglich");
+    }
+
+    GenericIterator<Formularfeld> it = ((Formular) objects[0])
+        .getFormularfelder(0);
+    while (it.hasNext())
+    {
+      Formularfeld ff = it.next();
+      Map<String, Object> ffmap = new HashMap<>();
       ffmap.put("Name", ff.getName());
       ffmap.put("Seite", ff.getSeite());
       ffmap.put("X", ff.getX());
@@ -138,8 +128,23 @@ public class FormularfelderExportCSV extends FormularfelderExport
       ffmap.put("Fontstyle", ff.getFontstyle());
       ffmap.put("Ausrichtung", ff.getAusrichtung().getKey());
       writer.write(ffmap, header);
+
     }
     writer.close();
+  }
+
+  @Override
+  public String getDateiname(Object object)
+  {
+    try
+    {
+      return VorlageUtil.getName(VorlageTyp.FORMULARFELDER_DATEINAME,
+          ((Formular) object).getBezeichnung()) + ".csv";
+    }
+    catch (RemoteException e)
+    {
+      return "Formularfelder.csv";
+    }
   }
 
   @Override

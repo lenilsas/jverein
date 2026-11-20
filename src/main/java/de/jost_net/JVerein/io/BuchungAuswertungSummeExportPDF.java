@@ -23,24 +23,17 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 
 import de.jost_net.JVerein.Einstellungen;
 import de.jost_net.JVerein.Einstellungen.Property;
-import de.jost_net.JVerein.Queries.BuchungQuery;
-import de.jost_net.JVerein.gui.control.BuchungsControl;
 import de.jost_net.JVerein.gui.dialogs.AbstractPartExportDialog;
 import de.jost_net.JVerein.gui.formatter.BuchungsartFormatter;
 import de.jost_net.JVerein.gui.formatter.BuchungsklasseFormatter;
-import de.jost_net.JVerein.gui.view.AnlagenbuchungListeView;
-import de.jost_net.JVerein.gui.view.BuchungListeView;
 import de.jost_net.JVerein.keys.ArtBuchungsart;
-import de.jost_net.JVerein.keys.Filter;
+import de.jost_net.JVerein.keys.Kontoart;
 import de.jost_net.JVerein.keys.VorlageTyp;
 import de.jost_net.JVerein.rmi.Buchung;
 import de.jost_net.JVerein.rmi.Buchungsart;
@@ -52,8 +45,6 @@ import de.willuhn.util.ProgressMonitor;
 
 public class BuchungAuswertungSummeExportPDF extends BuchungAuswertungExportPDF
 {
-  boolean geldkonto;
-
   private ExportLayoutParam params;
 
   @Override
@@ -65,15 +56,7 @@ public class BuchungAuswertungSummeExportPDF extends BuchungAuswertungExportPDF
   @Override
   public IOFormat[] getIOFormats(Class<?> objectType)
   {
-    if (objectType == BuchungListeView.class)
-    {
-      geldkonto = true;
-    }
-    else if (objectType == AnlagenbuchungListeView.class)
-    {
-      geldkonto = false;
-    }
-    else
+    if (!Buchung.class.isAssignableFrom(objectType))
     {
       return null;
     }
@@ -99,17 +82,19 @@ public class BuchungAuswertungSummeExportPDF extends BuchungAuswertungExportPDF
   }
 
   @Override
-  public String getDateiname(Object object)
+  public String getDateiname(Object object) throws RemoteException
   {
-    if (geldkonto)
-    {
-      return VorlageUtil.getName(VorlageTyp.SUMMENBUCHUNGEN_DATEINAME, object)
-          + ".pdf";
-    }
-    else
+    // TODO Ist Anlagenkontobestimmung so richtig?
+    if (object instanceof Buchung b
+        && b.getKonto().getKontoArt().equals(Kontoart.ANLAGE))
     {
       return VorlageUtil.getName(VorlageTyp.ANLAGEN_SUMMENBUCHUNGEN_DATEINAME,
           object) + ".pdf";
+    }
+    else
+    {
+      return VorlageUtil.getName(VorlageTyp.SUMMENBUCHUNGEN_DATEINAME, object)
+          + ".pdf";
     }
   }
 
@@ -126,8 +111,8 @@ public class BuchungAuswertungSummeExportPDF extends BuchungAuswertungExportPDF
   }
 
   @Override
-  public void doExport(Object[] objects, IOFormat format, File file,
-      ExportLayoutParam params, ProgressMonitor monitor)
+  public void doExport(Object[] objects, File file, ExportLayoutParam params,
+      ProgressMonitor monitor)
       throws RemoteException, ApplicationException, FileNotFoundException,
       DocumentException, IOException
   {
@@ -137,12 +122,8 @@ public class BuchungAuswertungSummeExportPDF extends BuchungAuswertungExportPDF
     summeumbuchungen = BigDecimal.ZERO;
 
     this.params = params;
-    // objects[0] = control, objects[1] ist der Filtertext
-    BuchungsControl control = (BuchungsControl) objects[0];
-    @SuppressWarnings("unchecked")
-    Map<Filter, String> filterparams = (Map<Filter, String>) objects[1];
-    BuchungQuery query = control.getQuery();
-    ArrayList<Buchungsart> buchungsarten = getBuchungsarten(query);
+
+    List<Buchungsart> buchungsarten = getBuchungsarten(objects);
 
     FileOutputStream fos = new FileOutputStream(file);
     Reporter reporter = new Reporter(fos, params);
@@ -167,8 +148,7 @@ public class BuchungAuswertungSummeExportPDF extends BuchungAuswertungExportPDF
             continue;
           }
         }
-        List<Buchung> liste = getBuchungenEinerBuchungsart(query.get(), bua,
-            bukla);
+        List<Buchung> liste = getBuchungenEinerBuchungsart(objects, bua, bukla);
         if (liste.size() > 0)
         {
           anzahlBuchungsarten += 1;
@@ -188,7 +168,7 @@ public class BuchungAuswertungSummeExportPDF extends BuchungAuswertungExportPDF
           continue;
         }
       }
-      List<Buchung> liste = getBuchungenEinerBuchungsart(query.get(), bua);
+      List<Buchung> liste = getBuchungenEinerBuchungsart(objects, bua);
       if (liste.size() > 0)
       {
         anzahlBuchungsarten += 1;
@@ -197,19 +177,20 @@ public class BuchungAuswertungSummeExportPDF extends BuchungAuswertungExportPDF
     }
     // Buchungen ohne Buchungsarten, wenn explizite Buchungsart angegeben ist,
     // dann nur wenn auch ohne Buchungsart ausgewählt ist (ID == null)
-    if (query.getBuchungsart() == null || (query.getBuchungsart() != null
-        && query.getBuchungsart().getID() == null))
-    {
-      List<Buchung> liste = getBuchungenOhneBuchungsart(query.get());
-      if (liste.size() > 0)
-      {
-        anzahlBuchungsarten += 1;
-      }
-      Buchungsart bua = (Buchungsart) Einstellungen.getDBService()
-          .createObject(Buchungsart.class, null);
-      bua.setBezeichnung("Ohne Buchungsart");
-      nichtLeer = createTableContent(reporter, bua, null, liste) || nichtLeer;
-    }
+    // TODO Ohne Buchungsart
+    // if (query.getBuchungsart() == null || (query.getBuchungsart() != null
+    // && query.getBuchungsart().getID() == null))
+    // {
+    // List<Buchung> liste = getBuchungenOhneBuchungsart(query.get());
+    // if (liste.size() > 0)
+    // {
+    // anzahlBuchungsarten += 1;
+    // }
+    // Buchungsart bua = (Buchungsart) Einstellungen.getDBService()
+    // .createObject(Buchungsart.class, null);
+    // bua.setBezeichnung("Ohne Buchungsart");
+    // nichtLeer = createTableContent(reporter, bua, null, liste) || nichtLeer;
+    // }
 
     if (anzahlBuchungsarten > 1)
     {
@@ -246,7 +227,9 @@ public class BuchungAuswertungSummeExportPDF extends BuchungAuswertungExportPDF
     }
     if (params.getFilterParameter())
     {
-      reporter.addParams(filterparams, params);
+      // TODO Woher Filterparams nehmen?
+      // Map<Filter, String> filterparams = (Map<Filter, String>) objects[1];
+      // reporter.addParams(filterparams, params);
     }
 
     reporter.close();

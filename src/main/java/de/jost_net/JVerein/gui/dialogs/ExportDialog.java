@@ -20,6 +20,7 @@ import java.io.File;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Map;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -34,8 +35,8 @@ import de.jost_net.JVerein.io.Exporter;
 import de.jost_net.JVerein.io.FileViewer;
 import de.jost_net.JVerein.io.IOFormat;
 import de.jost_net.JVerein.io.IORegistry;
+import de.jost_net.JVerein.keys.Filter;
 import de.willuhn.datasource.GenericObject;
-import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.dialogs.AbstractDialog;
 import de.willuhn.jameica.gui.input.CheckboxInput;
@@ -76,28 +77,32 @@ public class ExportDialog extends AbstractDialog<Object>
 
   private Object dateinameObject = null;
 
-  /**
-   * ct.
-   * 
-   * @param objects
-   *          Liste der zu exportierenden Objekte.
-   * @param type
-   *          die Art der zu exportierenden Objekte.
-   */
-  public ExportDialog(Object[] objects, Class<?> type, String helplink,
-      Object dateinameObject)
+  private Map<Filter, String> filterMap;
+
+  public ExportDialog(Object[] objects, String helplink, Object dateinameObject)
+  {
+    this(objects, helplink, dateinameObject, null);
+  }
+
+  public ExportDialog(Object[] objects, String helplink, Object dateinameObject,
+      Map<Filter, String> filterMap)
   {
     super(POSITION_CENTER);
-    setTitle(i18n.tr("Daten-Export"));
+    setTitle("Daten-Export");
     this.setSize(WINDOW_WIDTH, SWT.DEFAULT);
 
     this.objects = objects;
-    this.type = type;
     this.dateinameObject = dateinameObject;
+    this.filterMap = filterMap;
+    this.helplink = helplink;
+
+    if (objects != null && objects.length > 0)
+    {
+      this.type = objects[0].getClass();
+    }
 
     settings = new Settings(this.getClass());
     settings.setStoreWhenRead(true);
-    this.helplink = helplink;
   }
 
   /**
@@ -107,41 +112,27 @@ public class ExportDialog extends AbstractDialog<Object>
   protected void paint(Composite parent) throws Exception
   {
     Container group = new SimpleContainer(parent);
-    group.addText(i18n.tr(
-        "Bitte wählen Sie das gewünschte Dateiformat aus für den Export aus"),
+    group.addText(
+        "Bitte wählen Sie das gewünschte Dateiformat aus für den Export aus",
         true);
 
     Input formats = getExporterList();
-    group.addLabelPair(i18n.tr("Verfügbare Formate:"), formats);
+    group.addLabelPair("Verfügbare Formate:", formats);
 
     boolean exportEnabled = !(formats instanceof LabelInput);
 
     if (exportEnabled)
     {
-      group.addCheckbox(getOpenFile(), i18n.tr("Datei nach dem Export öffnen"));
+      group.addCheckbox(getOpenFile(), "Datei nach dem Export öffnen");
     }
     ButtonArea buttons = new ButtonArea();
     buttons.addButton(new HelpButton(helplink));
-    Button button = new Button(i18n.tr("Export starten"), new Action()
-    {
-
-      @Override
-      public void handleAction(Object context) throws ApplicationException
-      {
-        export();
-      }
-    }, null, true, "ok.png");
+    Button button = new Button("Export starten", c -> export(), null, true,
+        "ok.png");
     button.setEnabled(exportEnabled);
     buttons.addButton(button);
-    buttons.addButton(i18n.tr("Abbrechen"), new Action()
-    {
-
-      @Override
-      public void handleAction(Object context)
-      {
-        close();
-      }
-    }, null, false, "process-stop.png");
+    buttons.addButton("Abbrechen", c -> close(), null, false,
+        "process-stop.png");
     group.addButtonArea(buttons);
 
     getShell()
@@ -164,14 +155,12 @@ public class ExportDialog extends AbstractDialog<Object>
     catch (Exception e)
     {
       Logger.error("error while saving export file", e);
-      throw new ApplicationException(i18n.tr("Fehler beim Starten des Exports"),
-          e);
+      throw new ApplicationException("Fehler beim Starten des Exports", e);
     }
 
     if (exp == null || exp.exporter == null)
     {
-      throw new ApplicationException(
-          i18n.tr("Bitte wählen Sie ein Export-Format aus"));
+      throw new ApplicationException("Bitte wählen Sie ein Export-Format aus");
     }
     settings.setAttribute("lastformat", exp.format.getName());
     final boolean open = ((Boolean) getOpenFile().getValue()).booleanValue();
@@ -181,9 +170,7 @@ public class ExportDialog extends AbstractDialog<Object>
     boolean pdfFormat = hasFileExtension(fileExtensions, "pdf");
     String prefix = exp.exporter.getName().replaceAll(" ", "-") + ".";
     final Exporter exporter = exp.exporter;
-    final IOFormat format = exp.format;
 
-    // Dialog schliessen
     close();
 
     try
@@ -204,6 +191,7 @@ public class ExportDialog extends AbstractDialog<Object>
         // verwendet werden
         dateinameObject = d.getData();
         // Ausgabeparameter überschreiben die Mitgliederliste objects[0]!
+        // TODO Warum objects[0]???
         objects[0] = ((AuswertungControl) dateinameObject).getFilter();
       }
 
@@ -283,7 +271,7 @@ public class ExportDialog extends AbstractDialog<Object>
         {
           try
           {
-            exporter.doExport(objects, format, file, params, monitor);
+            exporter.doExport(objects, file, params, monitor);
             monitor.setPercentComplete(100);
             monitor.setStatus(ProgressMonitor.STATUS_DONE);
             String ausgabePfad = null;
@@ -418,10 +406,10 @@ public class ExportDialog extends AbstractDialog<Object>
             + " provides no export formats for " + type + " skipping");
         continue;
       }
-      for (int j = 0; j < formats.length; ++j)
+      for (IOFormat format : formats)
       {
         size++;
-        Exp e = new Exp(exp, formats[j]);
+        Exp e = new Exp(exp, format);
         l.add(e);
 
         String lf = e.format.getName();
@@ -434,7 +422,7 @@ public class ExportDialog extends AbstractDialog<Object>
 
     if (size == 0)
     {
-      exporterListe = new LabelInput(i18n.tr("Keine Export-Filter verfügbar"));
+      exporterListe = new LabelInput("Keine Export-Filter verfügbar");
       return exporterListe;
     }
 

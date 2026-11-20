@@ -48,7 +48,7 @@ public class FormularExporterXML implements Exporter
   @Override
   public IOFormat[] getIOFormats(Class<?> objectType)
   {
-    if (objectType != Formular.class)
+    if (!Formular.class.isAssignableFrom(objectType))
     {
       return null;
     }
@@ -88,8 +88,8 @@ public class FormularExporterXML implements Exporter
   }
 
   @Override
-  public void doExport(Object[] objects, IOFormat format, File file,
-      ExportLayoutParam params, ProgressMonitor monitor)
+  public void doExport(Object[] objects, File file, ExportLayoutParam params,
+      ProgressMonitor monitor)
       throws RemoteException, ApplicationException, FileNotFoundException,
       DocumentException, IOException
   {

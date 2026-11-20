@@ -21,11 +21,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.jost_net.JVerein.gui.control.WirtschaftsplanDetailControl;
+import de.jost_net.JVerein.rmi.Wirtschaftsplan;
 
 public class WirtschaftsplanParameterMap extends AbstractMap
 {
-  public Map<String, Object> getMap(WirtschaftsplanDetailControl control,
+  public Map<String, Object> getMap(Wirtschaftsplan wirtschaftsplan,
       Map<String, Object> inma) throws RemoteException
   {
     Map<String, Object> map = null;
@@ -44,13 +44,13 @@ public class WirtschaftsplanParameterMap extends AbstractMap
       switch (var)
       {
         case PARAMETER_BEZEICHNUNG:
-          value = control.getWirtschaftsplan().getBezeichung();
+          value = wirtschaftsplan.getBezeichung();
           break;
         case DATUM_VON_F:
-          value = fromDate((Date) control.getWirtschaftsplan().getDatumVon());
+          value = fromDate((Date) wirtschaftsplan.getDatumVon());
           break;
         case DATUM_BIS_F:
-          value = fromDate((Date) control.getWirtschaftsplan().getDatumBis());
+          value = fromDate((Date) wirtschaftsplan.getDatumBis());
           break;
       }
       map.put(var.getName(), value);

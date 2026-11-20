@@ -29,13 +29,14 @@ import de.jost_net.JVerein.Einstellungen;
 import de.jost_net.JVerein.Einstellungen.Property;
 import de.jost_net.JVerein.gui.action.EditAction;
 import de.jost_net.JVerein.gui.action.FormularfeldNeuAction;
-import de.jost_net.JVerein.gui.action.FormularfelderExportAction;
 import de.jost_net.JVerein.gui.action.FormularfelderImportAction;
 import de.jost_net.JVerein.gui.input.FormularInput;
 import de.jost_net.JVerein.gui.menu.FormularfeldMenu;
 import de.jost_net.JVerein.gui.parts.ButtonRtoL;
+import de.jost_net.JVerein.gui.parts.ExportButton;
 import de.jost_net.JVerein.gui.parts.JVereinTablePart;
 import de.jost_net.JVerein.gui.parts.NewButton;
+import de.jost_net.JVerein.gui.view.DokumentationUtil;
 import de.jost_net.JVerein.gui.view.FormularfeldDetailView;
 import de.jost_net.JVerein.keys.FormularArt;
 import de.jost_net.JVerein.keys.VorlageTyp;
@@ -250,8 +251,7 @@ public class FormularDetailControl extends VorZurueckControl implements Savable
     {
       return exportButton;
     }
-    exportButton = new ButtonRtoL("Export", new FormularfelderExportAction(),
-        formular, false, "document-save.png");
+    exportButton = new ExportButton(DokumentationUtil.FORMULARE, formular);
     if (getFormular().getArt() == FormularArt.HINTERGRUND)
     {
       exportButton.setEnabled(false);

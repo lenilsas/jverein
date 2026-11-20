@@ -20,7 +20,7 @@ import de.jost_net.JVerein.Einstellungen;
 import de.jost_net.JVerein.Einstellungen.Property;
 import de.jost_net.JVerein.gui.action.AboutAction;
 import de.jost_net.JVerein.gui.action.DokumentationAction;
-import de.jost_net.JVerein.gui.action.KontenrahmenExportAction;
+import de.jost_net.JVerein.gui.action.ExportAction;
 import de.jost_net.JVerein.gui.action.KontenrahmenImportAction;
 import de.jost_net.JVerein.gui.action.LesefelddefinitionenAction;
 import de.jost_net.JVerein.gui.action.StartViewAction;
@@ -38,6 +38,7 @@ import de.jost_net.JVerein.gui.view.BuchungsartListeView;
 import de.jost_net.JVerein.gui.view.BuchungsklasseListeView;
 import de.jost_net.JVerein.gui.view.BuchungsklasseSaldoView;
 import de.jost_net.JVerein.gui.view.DbBereinigenView;
+import de.jost_net.JVerein.gui.view.DokumentationUtil;
 import de.jost_net.JVerein.gui.view.EigenschaftGruppeListeView;
 import de.jost_net.JVerein.gui.view.EigenschaftListeView;
 import de.jost_net.JVerein.gui.view.EinstellungenAbrechnungView;
@@ -415,7 +416,8 @@ public class JVereinNavigation implements Extension
       }
       einstellungenbuchfuehrung.addChild(new JVereinNavigationItem(
           einstellungenbuchfuehrung, "Kontenrahmen-Export",
-          new KontenrahmenExportAction(), "document-save.png"));
+          new ExportAction(DokumentationUtil.KONTENRAHMEN),
+          "document-save.png"));
       einstellungenbuchfuehrung.addChild(new JVereinNavigationItem(
           einstellungenbuchfuehrung, "Kontenrahmen-Import",
           new KontenrahmenImportAction(), "file-import.png"));
