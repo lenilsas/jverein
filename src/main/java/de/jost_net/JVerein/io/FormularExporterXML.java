@@ -26,6 +26,7 @@ import java.rmi.RemoteException;
 
 import com.itextpdf.text.DocumentException;
 
+import de.jost_net.JVerein.gui.control.FilterControl;
 import de.jost_net.JVerein.gui.dialogs.AbstractPartExportDialog;
 import de.jost_net.JVerein.keys.VorlageTyp;
 import de.jost_net.JVerein.rmi.Formular;
@@ -74,12 +75,12 @@ public class FormularExporterXML implements Exporter
   }
 
   @Override
-  public String getDateiname(Object object)
+  public String getDateiname(FilterControl control, Object[] objects)
   {
     try
     {
       return VorlageUtil.getName(VorlageTyp.FORMULAR_DATEINAME,
-          ((Formular) object).getBezeichnung()) + ".xml";
+          ((Formular) objects[0]).getBezeichnung()) + ".xml";
     }
     catch (RemoteException e)
     {
@@ -88,8 +89,8 @@ public class FormularExporterXML implements Exporter
   }
 
   @Override
-  public void doExport(Object[] objects, File file, ExportLayoutParam params,
-      ProgressMonitor monitor)
+  public void doExport(Object[] objects, FilterControl control, File file,
+      ExportLayoutParam params, ProgressMonitor monitor)
       throws RemoteException, ApplicationException, FileNotFoundException,
       DocumentException, IOException
   {

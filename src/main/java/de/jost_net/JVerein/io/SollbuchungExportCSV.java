@@ -35,6 +35,7 @@ import com.itextpdf.text.DocumentException;
 import de.jost_net.JVerein.Einstellungen;
 import de.jost_net.JVerein.Variable.MitgliedMap;
 import de.jost_net.JVerein.Variable.SollbuchungMap;
+import de.jost_net.JVerein.gui.control.FilterControl;
 import de.jost_net.JVerein.gui.dialogs.AbstractPartExportDialog;
 import de.jost_net.JVerein.io.Adressbuch.Adressaufbereitung;
 import de.jost_net.JVerein.keys.VorlageTyp;
@@ -83,8 +84,8 @@ public class SollbuchungExportCSV implements Exporter
   }
 
   @Override
-  public void doExport(final Object[] objects, File file, ExportLayoutParam params,
-      ProgressMonitor monitor)
+  public void doExport(final Object[] objects, FilterControl control, File file,
+      ExportLayoutParam params, ProgressMonitor monitor)
       throws DocumentException, IOException, ApplicationException
   {
     try
@@ -145,9 +146,9 @@ public class SollbuchungExportCSV implements Exporter
   }
 
   @Override
-  public String getDateiname(Object object)
+  public String getDateiname(FilterControl control, Object[] objects)
   {
-    return VorlageUtil.getName(VorlageTyp.SOLLBUCHUNGEN_DATEINAME, object)
+    return VorlageUtil.getName(VorlageTyp.SOLLBUCHUNGEN_DATEINAME, control)
         + ".csv";
   }
 

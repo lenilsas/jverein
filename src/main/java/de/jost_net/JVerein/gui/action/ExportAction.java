@@ -23,13 +23,10 @@
  **********************************************************************/
 package de.jost_net.JVerein.gui.action;
 
-import java.util.Map;
-
 import de.jost_net.JVerein.gui.control.AbstractListeControl;
 import de.jost_net.JVerein.gui.control.FilterControl;
 import de.jost_net.JVerein.gui.dialogs.ExportDialog;
 import de.jost_net.JVerein.gui.parts.IJVereinPart;
-import de.jost_net.JVerein.keys.Filter;
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.system.OperationCanceledException;
@@ -52,10 +49,8 @@ public class ExportAction implements Action
     try
     {
       Object[] objArray = null;
-      Map<Filter, String> filterMap = null;
       if (context instanceof AbstractListeControl control)
       {
-
         IJVereinPart tablePart = control.getTablePart();
         // TODO Tablepart neu laden, oder nicht den TablePart sondern getList
         // verwenden
@@ -64,13 +59,7 @@ public class ExportAction implements Action
           throw new ApplicationException(
               "Für diesen Bereich gibt es keine exportierbaren Daten.");
         }
-
         objArray = tablePart.getItems().toArray();
-
-        if (control instanceof FilterControl fControl)
-        {
-          filterMap = fControl.getFilterText(false);
-        }
       }
       else if (context instanceof Object[] objs)
       {
@@ -85,7 +74,14 @@ public class ExportAction implements Action
       {
         throw new ApplicationException("Keine Daten zum Exportieren vorhanden");
       }
-      ExportDialog d = new ExportDialog(objArray, help, context, filterMap);
+
+      FilterControl filterControl = null;
+      if (context instanceof FilterControl fControl)
+      {
+        filterControl = fControl;
+      }
+
+      ExportDialog d = new ExportDialog(objArray, help, filterControl);
       d.open();
     }
     catch (OperationCanceledException | ApplicationException e)

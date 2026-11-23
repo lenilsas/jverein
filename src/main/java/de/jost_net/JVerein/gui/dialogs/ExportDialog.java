@@ -20,14 +20,13 @@ import java.io.File;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Map;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.FileDialog;
 
 import de.jost_net.JVerein.gui.control.AuswertungControl;
+import de.jost_net.JVerein.gui.control.FilterControl;
 import de.jost_net.JVerein.gui.dialogs.AbstractPartExportDialog.ExportArt;
 import de.jost_net.JVerein.gui.parts.HelpButton;
 import de.jost_net.JVerein.io.ExportLayoutParam;
@@ -35,7 +34,6 @@ import de.jost_net.JVerein.io.Exporter;
 import de.jost_net.JVerein.io.FileViewer;
 import de.jost_net.JVerein.io.IOFormat;
 import de.jost_net.JVerein.io.IORegistry;
-import de.jost_net.JVerein.keys.Filter;
 import de.willuhn.datasource.GenericObject;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.dialogs.AbstractDialog;
@@ -75,25 +73,16 @@ public class ExportDialog extends AbstractDialog<Object>
 
   private String helplink = null;
 
-  private Object dateinameObject = null;
+  private FilterControl control = null;
 
-  private Map<Filter, String> filterMap;
-
-  public ExportDialog(Object[] objects, String helplink, Object dateinameObject)
-  {
-    this(objects, helplink, dateinameObject, null);
-  }
-
-  public ExportDialog(Object[] objects, String helplink, Object dateinameObject,
-      Map<Filter, String> filterMap)
+  public ExportDialog(Object[] objects, String helplink, FilterControl control)
   {
     super(POSITION_CENTER);
     setTitle("Daten-Export");
     this.setSize(WINDOW_WIDTH, SWT.DEFAULT);
 
     this.objects = objects;
-    this.dateinameObject = dateinameObject;
-    this.filterMap = filterMap;
+    this.control = control;
     this.helplink = helplink;
 
     if (objects != null && objects.length > 0)
@@ -178,21 +167,21 @@ public class ExportDialog extends AbstractDialog<Object>
       // Die Ausgabe hat eigene Parameter und nutzt nicht die gefilterte
       // Mitgliederliste. Es wird ein eigener AusgabeControl erzeugt mit den
       // Ausgabeparametern als Filterliste
-      if (exporter.getAusgabeParameter(dateinameObject) != null)
+      if (exporter.getAusgabeParameter(control) != null)
       {
         AuswertungExportDialog d = new AuswertungExportDialog(
             AuswertungExportDialog.POSITION_CENTER,
-            exporter.getAusgabeParameter(dateinameObject));
+            exporter.getAusgabeParameter(control));
         if (d.open() == null)
         {
           throw new OperationCanceledException();
         }
         // Für die Dateinamen und Titel Generierung muss der AusgabeControl
         // verwendet werden
-        dateinameObject = d.getData();
+        control = d.getData();
         // Ausgabeparameter überschreiben die Mitgliederliste objects[0]!
         // TODO Warum objects[0]???
-        objects[0] = ((AuswertungControl) dateinameObject).getFilter();
+        objects[0] = ((AuswertungControl) control).getFilter();
       }
 
       ExportLayoutParam params;
@@ -201,10 +190,9 @@ public class ExportDialog extends AbstractDialog<Object>
       {
         // Layout Parameter abfragen
         ExporterExportDialog d = new ExporterExportDialog(
-            exporter.hasColortable2(dateinameObject), prefix, ExportArt.PDF,
-            exporter.getTitle(dateinameObject),
-            exporter.getSubtitle(dateinameObject),
-            exporter.getDateiname(dateinameObject),
+            exporter.hasColortable2(control), prefix, ExportArt.PDF,
+            exporter.getTitle(control), exporter.getSubtitle(control),
+            exporter.getDateiname(control, objects),
             exporter.getExportDialogOptions());
         if (!d.open())
         {
@@ -215,8 +203,8 @@ public class ExportDialog extends AbstractDialog<Object>
       else
       {
         params = new ExportLayoutParam();
-        params.setTitle(exporter.getTitle(dateinameObject));
-        params.setSubtitle(exporter.getSubtitle(dateinameObject));
+        params.setTitle(exporter.getTitle(control));
+        params.setSubtitle(exporter.getSubtitle(control));
       }
 
       final String filename;
@@ -240,7 +228,7 @@ public class ExportDialog extends AbstractDialog<Object>
         fd.setText(
             "Bitte geben Sie eine Datei ein, in die die Daten exportiert werden sollen.");
         fd.setOverwrite(true);
-        fd.setFileName(exporter.getDateiname(dateinameObject));
+        fd.setFileName(exporter.getDateiname(control, objects));
         if (fileExtensions != null && fileExtensions.length > 0)
         {
           fd.setFilterExtensions(fileExtensions);
@@ -271,7 +259,8 @@ public class ExportDialog extends AbstractDialog<Object>
         {
           try
           {
-            exporter.doExport(objects, file, params, monitor);
+            exporter.doExport(objects, control, file, params, monitor);
+
             monitor.setPercentComplete(100);
             monitor.setStatus(ProgressMonitor.STATUS_DONE);
             String ausgabePfad = null;

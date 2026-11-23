@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.rmi.RemoteException;
 
 import de.jost_net.JVerein.Einstellungen;
+import de.jost_net.JVerein.gui.control.FilterControl;
 import de.jost_net.JVerein.rmi.Buchungsart;
 import de.jost_net.JVerein.rmi.Buchungsklasse;
 import de.willuhn.datasource.rmi.DBIterator;
@@ -36,8 +37,8 @@ public abstract class KontenrahmenExport implements Exporter
   protected Integer jahr;
 
   @Override
-  public void doExport(Object[] objects, File file, ExportLayoutParam params,
-      ProgressMonitor monitor)
+  public void doExport(Object[] objects, FilterControl control, File file,
+      ExportLayoutParam params, ProgressMonitor monitor)
       throws ApplicationException, IOException
   {
     this.file = file;

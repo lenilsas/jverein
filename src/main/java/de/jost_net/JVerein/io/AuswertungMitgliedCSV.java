@@ -33,6 +33,7 @@ import com.itextpdf.text.DocumentException;
 
 import de.jost_net.JVerein.Einstellungen;
 import de.jost_net.JVerein.Variable.MitgliedMap;
+import de.jost_net.JVerein.gui.control.FilterControl;
 import de.jost_net.JVerein.gui.dialogs.AbstractPartExportDialog;
 import de.jost_net.JVerein.gui.view.MitgliedListeView;
 import de.jost_net.JVerein.gui.view.NichtMitgliedListeView;
@@ -45,8 +46,8 @@ public class AuswertungMitgliedCSV extends AuswertungMitgliedAbstractCSV
 {
 
   @Override
-  public void doExport(Object[] objects, File file, ExportLayoutParam params,
-      ProgressMonitor monitor)
+  public void doExport(Object[] objects, FilterControl control, File file,
+      ExportLayoutParam params, ProgressMonitor monitor)
       throws RemoteException, ApplicationException, FileNotFoundException,
       DocumentException, IOException
   {

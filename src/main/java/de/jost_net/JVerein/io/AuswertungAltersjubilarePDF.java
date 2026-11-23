@@ -26,6 +26,7 @@ import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.Paragraph;
 
+import de.jost_net.JVerein.gui.control.FilterControl;
 import de.jost_net.JVerein.gui.dialogs.AbstractPartExportDialog;
 import de.jost_net.JVerein.gui.view.MitgliedListeView;
 import de.jost_net.JVerein.io.Adressbuch.Adressaufbereitung;
@@ -77,10 +78,10 @@ public class AuswertungAltersjubilarePDF
   }
 
   @Override
-  public String getDateiname(Object object)
+  public String getDateiname(FilterControl control, Object[] objects)
   {
     return VorlageUtil.getName(VorlageTyp.AUSWERTUNG_ALTERSJUBILARE_DATEINAME,
-        object) + ".pdf";
+        control) + ".pdf";
   }
 
   @Override

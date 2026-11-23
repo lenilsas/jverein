@@ -24,6 +24,7 @@ import java.rmi.RemoteException;
 
 import com.itextpdf.text.DocumentException;
 
+import de.jost_net.JVerein.gui.control.FilterControl;
 import de.jost_net.JVerein.keys.Filter;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.ProgressMonitor;
@@ -47,6 +48,7 @@ public interface Exporter extends IO
    * 
    * @param objects
    *          die zu exportierenden Objekte.
+   * @param control
    * @param file
    *          File-Object für die Ausgabe. Der Exporter muss die Datei selbe
    *          erstellen und schliessen!
@@ -56,24 +58,27 @@ public interface Exporter extends IO
    * @throws RemoteException
    * @throws ApplicationException
    */
-  public void doExport(Object[] objects, File file, ExportLayoutParam params,
-      ProgressMonitor monitor)
+  public void doExport(Object[] objects, FilterControl control, File file,
+      ExportLayoutParam params, ProgressMonitor monitor)
       throws RemoteException, ApplicationException, FileNotFoundException,
       DocumentException, IOException;
 
   /**
    * Dateiname für Report generieren
    * 
+   * @param objects
+   * 
    * @throws RemoteException
    */
-  public String getDateiname(Object object) throws RemoteException;
+  public String getDateiname(FilterControl control, Object[] objects)
+      throws RemoteException;
 
   /**
    * Titel für Report generieren
    * 
    * @return Titel
    */
-  default String getTitle(Object object)
+  default String getTitle(FilterControl object)
   {
     return null;
   }
@@ -83,7 +88,7 @@ public interface Exporter extends IO
    * 
    * @return Subtitle
    */
-  default String getSubtitle(Object object)
+  default String getSubtitle(FilterControl object)
   {
     return null;
   }
@@ -94,7 +99,7 @@ public interface Exporter extends IO
    * @param object
    * @return
    */
-  default boolean hasColortable2(Object object)
+  default boolean hasColortable2(FilterControl object)
   {
     return false;
   }
@@ -105,7 +110,7 @@ public interface Exporter extends IO
    * @param object
    * @return
    */
-  default Filter[] getAusgabeParameter(Object object)
+  default Filter[] getAusgabeParameter(FilterControl object)
   {
     return null;
   }

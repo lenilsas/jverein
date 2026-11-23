@@ -24,6 +24,7 @@ import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 
 import de.jost_net.JVerein.Einstellungen;
+import de.jost_net.JVerein.gui.control.FilterControl;
 import de.jost_net.JVerein.gui.dialogs.AbstractPartExportDialog;
 import de.jost_net.JVerein.gui.view.MitgliedListeView;
 import de.jost_net.JVerein.keys.VorlageTyp;
@@ -72,10 +73,10 @@ public class AuswertungJahrgangsstatistikPDF
   }
 
   @Override
-  public String getDateiname(Object object)
+  public String getDateiname(FilterControl control, Object[] objects)
   {
     return VorlageUtil.getName(
-        VorlageTyp.AUSWERTUNG_JAHRGANGS_STATISTIK_DATEINAME, object) + ".pdf";
+        VorlageTyp.AUSWERTUNG_JAHRGANGS_STATISTIK_DATEINAME, control) + ".pdf";
   }
 
   @Override

@@ -28,6 +28,7 @@ import java.util.TreeMap;
 import com.itextpdf.text.DocumentException;
 
 import de.jost_net.JVerein.Einstellungen;
+import de.jost_net.JVerein.gui.control.FilterControl;
 import de.jost_net.JVerein.gui.input.GeschlechtInput;
 import de.jost_net.JVerein.keys.Filter;
 import de.jost_net.JVerein.keys.Jubeljahr;
@@ -54,8 +55,8 @@ public abstract class AuswertungJahrgangsstatistikAbstract implements Exporter
 
   @SuppressWarnings("unchecked")
   @Override
-  public void doExport(final Object[] objects, File file, ExportLayoutParam params,
-      ProgressMonitor monitor)
+  public void doExport(final Object[] objects, FilterControl control, File file,
+      ExportLayoutParam params, ProgressMonitor monitor)
       throws ApplicationException, DocumentException, IOException
   {
     /*
@@ -175,21 +176,21 @@ public abstract class AuswertungJahrgangsstatistikAbstract implements Exporter
   protected abstract void close() throws IOException, DocumentException;
 
   @Override
-  public String getTitle(Object object)
+  public String getTitle(FilterControl object)
   {
     return VorlageUtil.getName(VorlageTyp.AUSWERTUNG_JAHRGANGS_STATISTIK_TITEL,
         object);
   }
 
   @Override
-  public String getSubtitle(Object object)
+  public String getSubtitle(FilterControl object)
   {
     return VorlageUtil
         .getName(VorlageTyp.AUSWERTUNG_JAHRGANGS_STATISTIK_SUBTITEL, object);
   }
 
   @Override
-  public Filter[] getAusgabeParameter(Object object)
+  public Filter[] getAusgabeParameter(FilterControl object)
   {
     return new Filter[] { Filter.JUBELJAHR };
   }

@@ -34,6 +34,7 @@ import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import de.jost_net.JVerein.Einstellungen;
 import de.jost_net.JVerein.Einstellungen.Property;
+import de.jost_net.JVerein.gui.control.FilterControl;
 import de.jost_net.JVerein.gui.control.WirtschaftsplanNode;
 import de.jost_net.JVerein.gui.dialogs.AbstractPartExportDialog;
 import de.jost_net.JVerein.gui.formatter.BuchungsklasseFormatter;
@@ -92,18 +93,18 @@ public class WirtschaftsplanExporterPDF implements Exporter
   }
 
   @Override
-  public String getDateiname(Object object)
+  public String getDateiname(FilterControl control, Object[] objects)
   {
-    return VorlageUtil.getName(object instanceof Object[]
-        ? VorlageTyp.WIRTSCHAFTSPLAN_MEHRERE_DATEINAME
-        : VorlageTyp.WIRTSCHAFTSPLAN_DATEINAME, object) + ".pdf";
+    return VorlageUtil
+        .getName(control == null ? VorlageTyp.WIRTSCHAFTSPLAN_MEHRERE_DATEINAME
+            : VorlageTyp.WIRTSCHAFTSPLAN_DATEINAME, control)
+        + ".pdf";
   }
 
   @Override
-  public void doExport(Object[] objects, File file, ExportLayoutParam params,
-      ProgressMonitor monitor)
-      throws RemoteException, ApplicationException, FileNotFoundException,
-      DocumentException, IOException
+  public void doExport(Object[] objects, FilterControl control, File file,
+      ExportLayoutParam params, ProgressMonitor monitor) throws RemoteException, ApplicationException,
+      FileNotFoundException, DocumentException, IOException
   {
     Wirtschaftsplan[] wirtschaftsplaene = Arrays.stream(objects)
         .filter(Wirtschaftsplan.class::isInstance)
@@ -487,25 +488,23 @@ public class WirtschaftsplanExporterPDF implements Exporter
   }
 
   @Override
-  public String getTitle(Object object)
+  public String getTitle(FilterControl object)
   {
-    return VorlageUtil.getName(
-        object instanceof Object[] ? VorlageTyp.WIRTSCHAFTSPLAN_MEHRERE_TITEL
-            : VorlageTyp.WIRTSCHAFTSPLAN_TITEL,
-        object);
+    return VorlageUtil
+        .getName(object == null ? VorlageTyp.WIRTSCHAFTSPLAN_MEHRERE_TITEL
+            : VorlageTyp.WIRTSCHAFTSPLAN_TITEL, object);
   }
 
   @Override
-  public String getSubtitle(Object object)
+  public String getSubtitle(FilterControl object)
   {
-    return VorlageUtil.getName(
-        object instanceof Object[] ? VorlageTyp.WIRTSCHAFTSPLAN_MEHRERE_SUBTITEL
-            : VorlageTyp.WIRTSCHAFTSPLAN_SUBTITEL,
-        object);
+    return VorlageUtil
+        .getName(object == null ? VorlageTyp.WIRTSCHAFTSPLAN_MEHRERE_SUBTITEL
+            : VorlageTyp.WIRTSCHAFTSPLAN_SUBTITEL, object);
   }
 
   @Override
-  public boolean hasColortable2(Object object)
+  public boolean hasColortable2(FilterControl object)
   {
     return true;
   }

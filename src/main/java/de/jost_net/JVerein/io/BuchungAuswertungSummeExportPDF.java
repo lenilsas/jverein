@@ -29,11 +29,12 @@ import com.itextpdf.text.Element;
 
 import de.jost_net.JVerein.Einstellungen;
 import de.jost_net.JVerein.Einstellungen.Property;
+import de.jost_net.JVerein.gui.control.BuchungsControl;
+import de.jost_net.JVerein.gui.control.FilterControl;
 import de.jost_net.JVerein.gui.dialogs.AbstractPartExportDialog;
 import de.jost_net.JVerein.gui.formatter.BuchungsartFormatter;
 import de.jost_net.JVerein.gui.formatter.BuchungsklasseFormatter;
 import de.jost_net.JVerein.keys.ArtBuchungsart;
-import de.jost_net.JVerein.keys.Kontoart;
 import de.jost_net.JVerein.keys.VorlageTyp;
 import de.jost_net.JVerein.rmi.Buchung;
 import de.jost_net.JVerein.rmi.Buchungsart;
@@ -82,37 +83,36 @@ public class BuchungAuswertungSummeExportPDF extends BuchungAuswertungExportPDF
   }
 
   @Override
-  public String getDateiname(Object object) throws RemoteException
+  public String getDateiname(FilterControl control, Object[] objects)
+      throws RemoteException
   {
-    // TODO Ist Anlagenkontobestimmung so richtig?
-    if (object instanceof Buchung b
-        && b.getKonto().getKontoArt().equals(Kontoart.ANLAGE))
+    if (control instanceof BuchungsControl bcontrol && bcontrol.getGeldkonto())
     {
-      return VorlageUtil.getName(VorlageTyp.ANLAGEN_SUMMENBUCHUNGEN_DATEINAME,
-          object) + ".pdf";
+      return VorlageUtil.getName(VorlageTyp.SUMMENBUCHUNGEN_DATEINAME, control)
+          + ".pdf";
     }
     else
     {
-      return VorlageUtil.getName(VorlageTyp.SUMMENBUCHUNGEN_DATEINAME, object)
-          + ".pdf";
+      return VorlageUtil.getName(VorlageTyp.ANLAGEN_SUMMENBUCHUNGEN_DATEINAME,
+          control) + ".pdf";
     }
   }
 
   @Override
-  public String getTitle(Object object)
+  public String getTitle(FilterControl object)
   {
     return VorlageUtil.getName(VorlageTyp.SUMMENBUCHUNGEN_TITEL, object);
   }
 
   @Override
-  public String getSubtitle(Object object)
+  public String getSubtitle(FilterControl object)
   {
     return VorlageUtil.getName(VorlageTyp.SUMMENBUCHUNGEN_SUBTITEL, object);
   }
 
   @Override
-  public void doExport(Object[] objects, File file, ExportLayoutParam params,
-      ProgressMonitor monitor)
+  public void doExport(Object[] objects, FilterControl control, File file,
+      ExportLayoutParam params, ProgressMonitor monitor)
       throws RemoteException, ApplicationException, FileNotFoundException,
       DocumentException, IOException
   {
@@ -227,9 +227,7 @@ public class BuchungAuswertungSummeExportPDF extends BuchungAuswertungExportPDF
     }
     if (params.getFilterParameter())
     {
-      // TODO Woher Filterparams nehmen?
-      // Map<Filter, String> filterparams = (Map<Filter, String>) objects[1];
-      // reporter.addParams(filterparams, params);
+      reporter.addParams(control.getFilterText(false), params);
     }
 
     reporter.close();

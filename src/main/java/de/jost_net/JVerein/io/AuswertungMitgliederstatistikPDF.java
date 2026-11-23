@@ -33,6 +33,7 @@ import com.itextpdf.text.Paragraph;
 
 import de.jost_net.JVerein.Einstellungen;
 import de.jost_net.JVerein.Einstellungen.Property;
+import de.jost_net.JVerein.gui.control.FilterControl;
 import de.jost_net.JVerein.gui.dialogs.AbstractPartExportDialog;
 import de.jost_net.JVerein.gui.input.GeschlechtInput;
 import de.jost_net.JVerein.gui.view.MitgliedListeView;
@@ -56,8 +57,8 @@ public class AuswertungMitgliederstatistikPDF implements Exporter
 
   @SuppressWarnings("unchecked")
   @Override
-  public void doExport(Object[] objects, File file, ExportLayoutParam params,
-      ProgressMonitor monitor)
+  public void doExport(Object[] objects, FilterControl control, File file,
+      ExportLayoutParam params, ProgressMonitor monitor)
       throws RemoteException, ApplicationException, FileNotFoundException,
       DocumentException, IOException
   {
@@ -454,28 +455,28 @@ public class AuswertungMitgliederstatistikPDF implements Exporter
   }
 
   @Override
-  public String getDateiname(Object object)
+  public String getDateiname(FilterControl control, Object[] objects)
   {
     return VorlageUtil.getName(
-        VorlageTyp.AUSWERTUNG_MITGLIEDER_STATISTIK_DATEINAME, object) + ".pdf";
+        VorlageTyp.AUSWERTUNG_MITGLIEDER_STATISTIK_DATEINAME, control) + ".pdf";
   }
 
   @Override
-  public String getTitle(Object object)
+  public String getTitle(FilterControl object)
   {
     return VorlageUtil.getName(VorlageTyp.AUSWERTUNG_MITGLIEDER_STATISTIK_TITEL,
         object);
   }
 
   @Override
-  public String getSubtitle(Object object)
+  public String getSubtitle(FilterControl object)
   {
     return VorlageUtil
         .getName(VorlageTyp.AUSWERTUNG_MITGLIEDER_STATISTIK_SUBTITEL, object);
   }
 
   @Override
-  public Filter[] getAusgabeParameter(Object object)
+  public Filter[] getAusgabeParameter(FilterControl object)
   {
     return new Filter[] { Filter.STICHTAG };
   }

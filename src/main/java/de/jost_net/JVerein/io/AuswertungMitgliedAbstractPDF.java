@@ -17,6 +17,7 @@
 package de.jost_net.JVerein.io;
 
 import de.jost_net.JVerein.Queries.MitgliedQuery.MitgliedAuswahl;
+import de.jost_net.JVerein.gui.control.FilterControl;
 import de.jost_net.JVerein.gui.control.MitgliedControl;
 import de.jost_net.JVerein.keys.VorlageTyp;
 import de.jost_net.JVerein.util.VorlageUtil;
@@ -28,19 +29,19 @@ public abstract class AuswertungMitgliedAbstractPDF
   protected MitgliedAuswahl mitgliedauswahl = MitgliedAuswahl.MITGLIEDER;
 
   @Override
-  public String getDateiname(Object object)
+  public String getDateiname(FilterControl control, Object[] objects)
   {
-    if (((MitgliedControl) object).getMitgliedAuswahl()
+    if (((MitgliedControl) control).getMitgliedAuswahl()
         .equals(MitgliedAuswahl.MITGLIEDER))
     {
       return VorlageUtil.getName(VorlageTyp.AUSWERTUNG_MITGLIED_DATEINAME,
-          object, getExportName()) + ".pdf";
+          control, getExportName()) + ".pdf";
     }
     else
     {
       mitgliedauswahl = MitgliedAuswahl.NICHTMITGLIEDER;
       return VorlageUtil.getName(VorlageTyp.AUSWERTUNG_NICHT_MITGLIED_DATEINAME,
-          object, getExportName()) + ".pdf";
+          control, getExportName()) + ".pdf";
     }
   }
 

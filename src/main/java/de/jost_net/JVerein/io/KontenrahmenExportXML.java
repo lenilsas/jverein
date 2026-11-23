@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.rmi.RemoteException;
 
+import de.jost_net.JVerein.gui.control.FilterControl;
 import de.jost_net.JVerein.gui.dialogs.AbstractPartExportDialog;
 import de.jost_net.JVerein.keys.VorlageTyp;
 import de.jost_net.JVerein.rmi.Buchungsart;
@@ -83,7 +84,7 @@ public class KontenrahmenExportXML extends KontenrahmenExport
   }
 
   @Override
-  public String getDateiname(Object object)
+  public String getDateiname(FilterControl control, Object[] objects)
   {
     return VorlageUtil.getName(VorlageTyp.KONTENRAHMEN_DATEINAME_V1) + ".xml";
   }

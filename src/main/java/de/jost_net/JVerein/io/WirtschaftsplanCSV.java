@@ -34,6 +34,7 @@ import org.supercsv.prefs.CsvPreference;
 
 import de.jost_net.JVerein.Einstellungen;
 import de.jost_net.JVerein.Einstellungen.Property;
+import de.jost_net.JVerein.gui.control.FilterControl;
 import de.jost_net.JVerein.gui.control.WirtschaftsplanNode;
 import de.jost_net.JVerein.gui.dialogs.AbstractPartExportDialog;
 import de.jost_net.JVerein.keys.BuchungsartSort;
@@ -54,9 +55,8 @@ public class WirtschaftsplanCSV implements Exporter
 
   @SuppressWarnings("unchecked")
   @Override
-  public void doExport(Object[] objects, File file, ExportLayoutParam params,
-      ProgressMonitor monitor)
-      throws ApplicationException, RemoteException
+  public void doExport(Object[] objects, FilterControl control, File file,
+      ExportLayoutParam params, ProgressMonitor monitor) throws ApplicationException, RemoteException
   {
     Wirtschaftsplan[] wirtschaftsplaene = Arrays.stream(objects)
         .filter(Wirtschaftsplan.class::isInstance)
@@ -240,11 +240,12 @@ public class WirtschaftsplanCSV implements Exporter
   }
 
   @Override
-  public String getDateiname(Object object)
+  public String getDateiname(FilterControl control, Object[] objects)
   {
-    return VorlageUtil.getName(object instanceof Object[]
-        ? VorlageTyp.WIRTSCHAFTSPLAN_MEHRERE_DATEINAME
-        : VorlageTyp.WIRTSCHAFTSPLAN_DATEINAME, object) + ".csv";
+    return VorlageUtil
+        .getName(control == null ? VorlageTyp.WIRTSCHAFTSPLAN_MEHRERE_DATEINAME
+            : VorlageTyp.WIRTSCHAFTSPLAN_DATEINAME, control)
+        + ".csv";
   }
 
   @Override

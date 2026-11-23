@@ -36,6 +36,7 @@ import org.supercsv.prefs.CsvPreference;
 
 import com.itextpdf.text.DocumentException;
 
+import de.jost_net.JVerein.gui.control.FilterControl;
 import de.jost_net.JVerein.gui.dialogs.AbstractPartExportDialog;
 import de.jost_net.JVerein.keys.VorlageTyp;
 import de.jost_net.JVerein.rmi.Formular;
@@ -88,8 +89,8 @@ public class FormularfelderExportCSV implements Exporter
   }
 
   @Override
-  public void doExport(Object[] objects, File file, ExportLayoutParam params,
-      ProgressMonitor monitor)
+  public void doExport(Object[] objects, FilterControl control, File file,
+      ExportLayoutParam params, ProgressMonitor monitor)
       throws ApplicationException, DocumentException, IOException
   {
     Logger.debug(String.format("Formularfelder Export"));
@@ -112,7 +113,6 @@ public class FormularfelderExportCSV implements Exporter
       throw new ApplicationException(
           "Nur Export der Formularfelder von einem Formular möglich");
     }
-
     GenericIterator<Formularfeld> it = ((Formular) objects[0])
         .getFormularfelder(0);
     while (it.hasNext())
@@ -134,12 +134,12 @@ public class FormularfelderExportCSV implements Exporter
   }
 
   @Override
-  public String getDateiname(Object object)
+  public String getDateiname(FilterControl control, Object[] objects)
   {
     try
     {
       return VorlageUtil.getName(VorlageTyp.FORMULARFELDER_DATEINAME,
-          ((Formular) object).getBezeichnung()) + ".csv";
+          ((Formular) objects[0]).getBezeichnung()) + ".csv";
     }
     catch (RemoteException e)
     {

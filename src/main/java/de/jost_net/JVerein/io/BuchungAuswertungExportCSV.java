@@ -33,8 +33,9 @@ import org.supercsv.prefs.CsvPreference;
 import com.itextpdf.text.DocumentException;
 
 import de.jost_net.JVerein.Variable.BuchungMap;
+import de.jost_net.JVerein.gui.control.BuchungsControl;
+import de.jost_net.JVerein.gui.control.FilterControl;
 import de.jost_net.JVerein.gui.dialogs.AbstractPartExportDialog;
-import de.jost_net.JVerein.keys.Kontoart;
 import de.jost_net.JVerein.keys.VorlageTyp;
 import de.jost_net.JVerein.rmi.Buchung;
 import de.jost_net.JVerein.util.VorlageUtil;
@@ -78,25 +79,24 @@ public class BuchungAuswertungExportCSV implements Exporter
   }
 
   @Override
-  public String getDateiname(Object object) throws RemoteException
+  public String getDateiname(FilterControl control, Object[] objects)
+      throws RemoteException
   {
-    // TODO Ist Anlagenkontobestimmung so richtig?
-    if (object instanceof Buchung b
-        && b.getKonto().getKontoArt().equals(Kontoart.ANLAGE))
+    if (control instanceof BuchungsControl bcontrol && bcontrol.getGeldkonto())
     {
-      return VorlageUtil.getName(VorlageTyp.ANLAGEN_CSVBUCHUNGEN_DATEINAME,
-          object) + ".csv";
+      return VorlageUtil.getName(VorlageTyp.CSVBUCHUNGEN_DATEINAME, control)
+          + ".csv";
     }
     else
     {
-      return VorlageUtil.getName(VorlageTyp.CSVBUCHUNGEN_DATEINAME, object)
-          + ".csv";
+      return VorlageUtil.getName(VorlageTyp.ANLAGEN_CSVBUCHUNGEN_DATEINAME,
+          control) + ".csv";
     }
   }
 
   @Override
-  public void doExport(Object[] objects, File file, ExportLayoutParam params,
-      ProgressMonitor monitor)
+  public void doExport(Object[] objects, FilterControl control, File file,
+      ExportLayoutParam params, ProgressMonitor monitor)
       throws RemoteException, ApplicationException, FileNotFoundException,
       DocumentException, IOException
   {

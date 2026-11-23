@@ -13,6 +13,7 @@ import java.util.List;
 import com.itextpdf.text.DocumentException;
 
 import de.jost_net.JVerein.gui.control.BelegControl;
+import de.jost_net.JVerein.gui.control.FilterControl;
 import de.jost_net.JVerein.keys.VorlageTyp;
 import de.jost_net.JVerein.rmi.AbstractBelegDBObject;
 import de.jost_net.JVerein.rmi.Beleg;
@@ -59,8 +60,8 @@ public class BelegExport implements Exporter
   }
 
   @Override
-  public void doExport(Object[] objects, File file, ExportLayoutParam params,
-      ProgressMonitor monitor)
+  public void doExport(Object[] objects, FilterControl control, File file,
+      ExportLayoutParam params, ProgressMonitor monitor)
       throws RemoteException, ApplicationException, FileNotFoundException,
       DocumentException, IOException
   {
@@ -162,7 +163,7 @@ public class BelegExport implements Exporter
   }
 
   @Override
-  public String getDateiname(Object object)
+  public String getDateiname(FilterControl control, Object[] objects)
   {
     return "Belegexport";
   }

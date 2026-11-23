@@ -28,6 +28,7 @@ import com.itextpdf.text.DocumentException;
 
 import de.jost_net.JVerein.Einstellungen;
 import de.jost_net.JVerein.Einstellungen.Property;
+import de.jost_net.JVerein.gui.control.FilterControl;
 import de.jost_net.JVerein.keys.Filter;
 import de.jost_net.JVerein.keys.Jubeljahr;
 import de.jost_net.JVerein.keys.VorlageTyp;
@@ -49,8 +50,8 @@ public abstract class AuswertungAltersjubilareAbstract implements Exporter
 
   @SuppressWarnings("unchecked")
   @Override
-  public void doExport(Object[] objects, File file, ExportLayoutParam params,
-      ProgressMonitor monitor)
+  public void doExport(Object[] objects, FilterControl control, File file,
+      ExportLayoutParam params, ProgressMonitor monitor)
       throws ApplicationException, DocumentException, IOException
   {
     /*
@@ -114,21 +115,21 @@ public abstract class AuswertungAltersjubilareAbstract implements Exporter
       throws IOException, DocumentException, ApplicationException;
 
   @Override
-  public String getTitle(Object object)
+  public String getTitle(FilterControl object)
   {
     return VorlageUtil.getName(VorlageTyp.AUSWERTUNG_ALTERSJUBILARE_TITEL,
         object);
   }
 
   @Override
-  public String getSubtitle(Object object)
+  public String getSubtitle(FilterControl object)
   {
     return VorlageUtil.getName(VorlageTyp.AUSWERTUNG_ALTERSJUBILARE_SUBTITEL,
         object);
   }
 
   @Override
-  public Filter[] getAusgabeParameter(Object object)
+  public Filter[] getAusgabeParameter(FilterControl object)
   {
     return new Filter[] { Filter.JUBELJAHR };
   }

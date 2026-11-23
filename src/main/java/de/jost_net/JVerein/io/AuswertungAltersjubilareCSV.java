@@ -20,6 +20,7 @@ package de.jost_net.JVerein.io;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 
+import de.jost_net.JVerein.gui.control.FilterControl;
 import de.jost_net.JVerein.gui.dialogs.AbstractPartExportDialog;
 import de.jost_net.JVerein.gui.view.MitgliedListeView;
 import de.jost_net.JVerein.keys.VorlageTyp;
@@ -71,10 +72,10 @@ public class AuswertungAltersjubilareCSV
   }
 
   @Override
-  public String getDateiname(Object object)
+  public String getDateiname(FilterControl control, Object[] objects)
   {
     return VorlageUtil.getName(VorlageTyp.AUSWERTUNG_ALTERSJUBILARE_DATEINAME,
-        object) + ".csv";
+        control) + ".csv";
   }
 
   @Override
