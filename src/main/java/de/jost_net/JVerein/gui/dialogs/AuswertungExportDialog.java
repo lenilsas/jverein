@@ -17,6 +17,8 @@
 package de.jost_net.JVerein.gui.dialogs;
 
 import java.rmi.RemoteException;
+import java.util.Map;
+
 import org.eclipse.swt.widgets.Composite;
 
 import de.jost_net.JVerein.gui.control.AuswertungControl;
@@ -32,11 +34,11 @@ import de.willuhn.jameica.system.OperationCanceledException;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 
-public class AuswertungExportDialog extends AbstractDialog<AuswertungControl>
+public class AuswertungExportDialog extends AbstractDialog<Map<Filter, String>>
 {
   private LabelInput status = null;
 
-  private AuswertungControl data = null;
+  private Map<Filter, String> data = null;
 
   private Filter[] filter;
 
@@ -71,20 +73,10 @@ public class AuswertungExportDialog extends AbstractDialog<AuswertungControl>
         status.setColor(Color.ERROR);
         return;
       }
-      data = control;
+
       try
       {
-        // Filter Daten von GUI lesen weil der Dialog geschlossen wird
-        control.generateFilter();
-      }
-      catch (RemoteException e)
-      {
-        String text = "Fehler beim Lesen der Daten.";
-        Logger.error(text, e);
-        throw new ApplicationException(text);
-      }
-      try
-      {
+        data = control.getFilterText(false);
         control.saveFilterSettings();
       }
       catch (RemoteException e)
@@ -103,7 +95,7 @@ public class AuswertungExportDialog extends AbstractDialog<AuswertungControl>
   }
 
   @Override
-  protected AuswertungControl getData()
+  protected Map<Filter, String> getData()
   {
     return data;
   }

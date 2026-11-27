@@ -227,20 +227,23 @@ public class ZusatzbetragControl extends FilterControl
   }
 
   @Override
-  protected String getTableTitle()
+  protected String getTableTitle() throws RemoteException
   {
-    return VorlageUtil.getName(VorlageTyp.ZUSATZBETRAEGE_TITEL, this);
+    return VorlageUtil.getName(VorlageTyp.ZUSATZBETRAEGE_TITEL,
+        getFilterText(true));
   }
 
   @Override
-  protected String getTableSubtitle()
+  protected String getTableSubtitle() throws RemoteException
   {
-    return VorlageUtil.getName(VorlageTyp.ZUSATZBETRAEGE_SUBTITEL, this);
+    return VorlageUtil.getName(VorlageTyp.ZUSATZBETRAEGE_SUBTITEL,
+        getFilterText(true));
   }
 
   @Override
-  protected String getTableDateiname()
+  protected String getTableDateiname() throws RemoteException
   {
-    return VorlageUtil.getName(VorlageTyp.ZUSATZBETRAEGE_DATEINAME, this);
+    return VorlageUtil.getName(VorlageTyp.ZUSATZBETRAEGE_DATEINAME,
+        getFilterText(true));
   }
 }

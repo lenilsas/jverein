@@ -25,7 +25,6 @@ import java.util.Map;
 
 import com.itextpdf.text.DocumentException;
 
-import de.jost_net.JVerein.gui.control.FilterControl;
 import de.jost_net.JVerein.keys.Filter;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.ProgressMonitor;
@@ -71,7 +70,7 @@ public interface Exporter extends IO
    * 
    * @throws RemoteException
    */
-  public String getDateiname(FilterControl control, Object[] objects)
+  public String getDateiname(Map<Filter, String> filterMap, Object[] objects)
       throws RemoteException;
 
   /**
@@ -79,7 +78,7 @@ public interface Exporter extends IO
    * 
    * @return Titel
    */
-  default String getTitle(FilterControl control)
+  default String getTitle(Map<Filter, String> filterMap)
   {
     return null;
   }
@@ -89,7 +88,7 @@ public interface Exporter extends IO
    * 
    * @return Subtitle
    */
-  default String getSubtitle(FilterControl control)
+  default String getSubtitle(Map<Filter, String> filterMap)
   {
     return null;
   }

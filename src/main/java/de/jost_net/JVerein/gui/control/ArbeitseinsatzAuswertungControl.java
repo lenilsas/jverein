@@ -84,7 +84,8 @@ public class ArbeitseinsatzAuswertungControl extends FilterControl
     else
     {
       auswertungPart = new ArbeitseinsatzAuswertungPart(null,
-          (ArbeitseinsatzAuswertung) getFilterValue(Filter.ARBEITSEINSATZ_AUSWERTUNG),
+          (ArbeitseinsatzAuswertung) getFilterValue(
+              Filter.ARBEITSEINSATZ_AUSWERTUNG),
           ((Jahr) getFilterValue(Filter.JAHR)).getKey());
       return auswertungPart.getArbeitseinsatzUeberpruefungList();
     }
@@ -93,29 +94,33 @@ public class ArbeitseinsatzAuswertungControl extends FilterControl
   @Override
   protected void TabRefresh() throws ApplicationException
   {
-    auswertungPart.refreshList((ArbeitseinsatzAuswertung) getFilterValue(Filter.ARBEITSEINSATZ_AUSWERTUNG),
+    auswertungPart.refreshList(
+        (ArbeitseinsatzAuswertung) getFilterValue(
+            Filter.ARBEITSEINSATZ_AUSWERTUNG),
         ((Jahr) getFilterValue(Filter.JAHR)).getKey());
   }
 
   @Override
-  protected String getTableTitle() throws ApplicationException
+  protected String getTableTitle() throws ApplicationException, RemoteException
   {
     return VorlageUtil.getName(VorlageTyp.AUSWERTUNG_ARBEITSEINSAETZE_TITEL,
-        this);
+        getFilterText(true));
   }
 
   @Override
-  protected String getTableSubtitle() throws ApplicationException
+  protected String getTableSubtitle()
+      throws ApplicationException, RemoteException
   {
     return VorlageUtil.getName(VorlageTyp.AUSWERTUNG_ARBEITSEINSAETZE_SUBTITEL,
-        this);
+        getFilterText(true));
   }
 
   @Override
-  protected String getTableDateiname() throws ApplicationException
+  protected String getTableDateiname()
+      throws ApplicationException, RemoteException
   {
     return VorlageUtil.getName(VorlageTyp.AUSWERTUNG_ARBEITSEINSAETZE_DATEINAME,
-        this);
+        getFilterText(true));
   }
 
 }

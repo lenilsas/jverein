@@ -137,21 +137,24 @@ public class ArbeitseinsatzControl extends FilterControl
   }
 
   @Override
-  protected String getTableTitle()
+  protected String getTableTitle() throws RemoteException
   {
-    return VorlageUtil.getName(VorlageTyp.ARBEITSEINSAETZE_TITEL, this);
+    return VorlageUtil.getName(VorlageTyp.ARBEITSEINSAETZE_TITEL,
+        getFilterText(true));
   }
 
   @Override
-  protected String getTableSubtitle()
+  protected String getTableSubtitle() throws RemoteException
   {
-    return VorlageUtil.getName(VorlageTyp.ARBEITSEINSAETZE_SUBTITEL, this);
+    return VorlageUtil.getName(VorlageTyp.ARBEITSEINSAETZE_SUBTITEL,
+        getFilterText(true));
   }
 
   @Override
-  protected String getTableDateiname()
+  protected String getTableDateiname() throws RemoteException
   {
-    return VorlageUtil.getName(VorlageTyp.ARBEITSEINSAETZE_DATEINAME, this);
+    return VorlageUtil.getName(VorlageTyp.ARBEITSEINSAETZE_DATEINAME,
+        getFilterText(true));
   }
 
 }

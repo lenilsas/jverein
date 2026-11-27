@@ -22,12 +22,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import de.jost_net.JVerein.gui.control.FilterControl;
 import de.jost_net.JVerein.keys.Filter;
 
 public class FilterMap extends AbstractMap
 {
-  public Map<String, Object> getMap(FilterControl control,
+  public Map<String, Object> getMap(Map<Filter, String> filterMap,
       Map<String, Object> inma) throws RemoteException
   {
     Map<String, Object> map = null;
@@ -39,9 +38,9 @@ public class FilterMap extends AbstractMap
     {
       map = inma;
     }
-    if (control != null)
+    if (filterMap != null)
     {
-      for (Entry<Filter, String> entry : control.getFilterText(true).entrySet())
+      for (Entry<Filter, String> entry : filterMap.entrySet())
       {
         map.put(entry.getKey().getSetting(), entry.getValue());
       }

@@ -143,21 +143,24 @@ public class AbrechnungslaufControl extends FilterControl
   }
 
   @Override
-  protected String getTableTitle()
+  protected String getTableTitle() throws RemoteException
   {
-    return VorlageUtil.getName(VorlageTyp.ABRECHNUNGSLAEUFE_TITEL, this);
+    return VorlageUtil.getName(VorlageTyp.ABRECHNUNGSLAEUFE_TITEL,
+        getFilterText(true));
   }
 
   @Override
-  protected String getTableSubtitle()
+  protected String getTableSubtitle() throws RemoteException
   {
-    return VorlageUtil.getName(VorlageTyp.ABRECHNUNGSLAEUFE_SUBTITEL, this);
+    return VorlageUtil.getName(VorlageTyp.ABRECHNUNGSLAEUFE_SUBTITEL,
+        getFilterText(true));
   }
 
   @Override
-  protected String getTableDateiname()
+  protected String getTableDateiname() throws RemoteException
   {
-    return VorlageUtil.getName(VorlageTyp.ABRECHNUNGSLAEUFE_DATEINAME, this);
+    return VorlageUtil.getName(VorlageTyp.ABRECHNUNGSLAEUFE_DATEINAME,
+        getFilterText(true));
   }
 
 }

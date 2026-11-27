@@ -19,13 +19,14 @@ package de.jost_net.JVerein.io;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Map;
 
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 
 import de.jost_net.JVerein.Einstellungen;
-import de.jost_net.JVerein.gui.control.FilterControl;
 import de.jost_net.JVerein.gui.dialogs.AbstractPartExportDialog;
+import de.jost_net.JVerein.keys.Filter;
 import de.jost_net.JVerein.keys.VorlageTyp;
 import de.jost_net.JVerein.rmi.Mitglied;
 import de.jost_net.JVerein.util.VorlageUtil;
@@ -73,10 +74,10 @@ public class AuswertungJahrgangsstatistikPDF
   }
 
   @Override
-  public String getDateiname(FilterControl control, Object[] objects)
+  public String getDateiname(Map<Filter, String> filterMap, Object[] objects)
   {
     return VorlageUtil.getName(
-        VorlageTyp.AUSWERTUNG_JAHRGANGS_STATISTIK_DATEINAME, control) + ".pdf";
+        VorlageTyp.AUSWERTUNG_JAHRGANGS_STATISTIK_DATEINAME, filterMap) + ".pdf";
   }
 
   @Override

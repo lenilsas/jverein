@@ -34,7 +34,6 @@ import com.itextpdf.text.Paragraph;
 
 import de.jost_net.JVerein.Einstellungen;
 import de.jost_net.JVerein.Einstellungen.Property;
-import de.jost_net.JVerein.gui.control.FilterControl;
 import de.jost_net.JVerein.gui.dialogs.AbstractPartExportDialog;
 import de.jost_net.JVerein.gui.input.GeschlechtInput;
 import de.jost_net.JVerein.keys.Filter;
@@ -451,24 +450,24 @@ public class AuswertungMitgliederstatistikPDF implements Exporter
   }
 
   @Override
-  public String getDateiname(FilterControl control, Object[] objects)
+  public String getDateiname(Map<Filter, String> filterMap, Object[] objects)
   {
     return VorlageUtil.getName(
-        VorlageTyp.AUSWERTUNG_MITGLIEDER_STATISTIK_DATEINAME, control) + ".pdf";
+        VorlageTyp.AUSWERTUNG_MITGLIEDER_STATISTIK_DATEINAME, filterMap) + ".pdf";
   }
 
   @Override
-  public String getTitle(FilterControl control)
+  public String getTitle(Map<Filter, String> filterMap)
   {
     return VorlageUtil.getName(VorlageTyp.AUSWERTUNG_MITGLIEDER_STATISTIK_TITEL,
-        control);
+        filterMap);
   }
 
   @Override
-  public String getSubtitle(FilterControl control)
+  public String getSubtitle(Map<Filter, String> filterMap)
   {
     return VorlageUtil
-        .getName(VorlageTyp.AUSWERTUNG_MITGLIEDER_STATISTIK_SUBTITEL, control);
+        .getName(VorlageTyp.AUSWERTUNG_MITGLIEDER_STATISTIK_SUBTITEL, filterMap);
   }
 
   @Override

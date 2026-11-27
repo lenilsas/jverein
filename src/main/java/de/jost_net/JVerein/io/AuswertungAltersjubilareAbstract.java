@@ -28,7 +28,6 @@ import com.itextpdf.text.DocumentException;
 
 import de.jost_net.JVerein.Einstellungen;
 import de.jost_net.JVerein.Einstellungen.Property;
-import de.jost_net.JVerein.gui.control.FilterControl;
 import de.jost_net.JVerein.keys.Filter;
 import de.jost_net.JVerein.keys.VorlageTyp;
 import de.jost_net.JVerein.rmi.Mitglied;
@@ -108,17 +107,17 @@ public abstract class AuswertungAltersjubilareAbstract implements Exporter
       throws IOException, DocumentException, ApplicationException;
 
   @Override
-  public String getTitle(FilterControl control)
+  public String getTitle(Map<Filter, String> filterMap)
   {
     return VorlageUtil.getName(VorlageTyp.AUSWERTUNG_ALTERSJUBILARE_TITEL,
-        control);
+        filterMap);
   }
 
   @Override
-  public String getSubtitle(FilterControl control)
+  public String getSubtitle(Map<Filter, String> filterMap)
   {
     return VorlageUtil.getName(VorlageTyp.AUSWERTUNG_ALTERSJUBILARE_SUBTITEL,
-        control);
+        filterMap);
   }
 
   @Override

@@ -144,20 +144,23 @@ public class LehrgangControl extends FilterControl
   }
 
   @Override
-  protected String getTableTitle()
+  protected String getTableTitle() throws RemoteException
   {
-    return VorlageUtil.getName(VorlageTyp.LEHRGAENGE_TITEL, this);
+    return VorlageUtil.getName(VorlageTyp.LEHRGAENGE_TITEL,
+        getFilterText(true));
   }
 
   @Override
-  protected String getTableSubtitle()
+  protected String getTableSubtitle() throws RemoteException
   {
-    return VorlageUtil.getName(VorlageTyp.LEHRGAENGE_SUBTITEL, this);
+    return VorlageUtil.getName(VorlageTyp.LEHRGAENGE_SUBTITEL,
+        getFilterText(true));
   }
 
   @Override
-  protected String getTableDateiname()
+  protected String getTableDateiname() throws RemoteException
   {
-    return VorlageUtil.getName(VorlageTyp.LEHRGAENGE_DATEINAME, this);
+    return VorlageUtil.getName(VorlageTyp.LEHRGAENGE_DATEINAME,
+        getFilterText(true));
   }
 }

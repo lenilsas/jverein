@@ -14,57 +14,16 @@
 package de.jost_net.JVerein.gui.control;
 
 import java.rmi.RemoteException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import de.jost_net.JVerein.Variable.FilterMap;
 import de.jost_net.JVerein.gui.parts.IJVereinPart;
-import de.jost_net.JVerein.keys.Filter;
 import de.willuhn.jameica.gui.AbstractView;
 import de.willuhn.util.ApplicationException;
 
 public class AuswertungControl extends FilterControl
 {
 
-  private Map<String, Object> filtermap;
-
-  private Map<Filter, String> filter;
-
   public AuswertungControl(AbstractView view)
   {
     super(view);
-  }
-
-  public void generateFilter() throws RemoteException
-  {
-    filtermap = new FilterMap().getMap(this, null);
-    filter = super.getFilterText(false);
-  }
-
-  @Override
-  public Map<Filter, String> getFilterText(boolean b)
-  {
-    // TODO!!!!
-    return this.filter;
-  }
-
-  public Map<String, Object> getMap(Map<String, Object> inma)
-  {
-    Map<String, Object> map = null;
-    if (inma == null)
-    {
-      map = new HashMap<>();
-    }
-    else
-    {
-      map = inma;
-    }
-    for (Entry<String, Object> entry : filtermap.entrySet())
-    {
-      map.put(entry.getKey(), entry.getValue());
-    }
-    return map;
   }
 
   @Override

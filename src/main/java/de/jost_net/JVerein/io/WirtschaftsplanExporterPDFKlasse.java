@@ -34,7 +34,6 @@ import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import de.jost_net.JVerein.Einstellungen;
 import de.jost_net.JVerein.Einstellungen.Property;
-import de.jost_net.JVerein.gui.control.FilterControl;
 import de.jost_net.JVerein.gui.control.WirtschaftsplanNode;
 import de.jost_net.JVerein.gui.dialogs.AbstractPartExportDialog;
 import de.jost_net.JVerein.gui.formatter.BuchungsklasseFormatter;
@@ -94,11 +93,11 @@ public class WirtschaftsplanExporterPDFKlasse implements Exporter
   }
 
   @Override
-  public String getDateiname(FilterControl control, Object[] objects)
+  public String getDateiname(Map<Filter, String> filterMap, Object[] objects)
   {
     return VorlageUtil
-        .getName(control == null ? VorlageTyp.WIRTSCHAFTSPLAN_MEHRERE_DATEINAME
-            : VorlageTyp.WIRTSCHAFTSPLAN_DATEINAME, control)
+        .getName(filterMap == null ? VorlageTyp.WIRTSCHAFTSPLAN_MEHRERE_DATEINAME
+            : VorlageTyp.WIRTSCHAFTSPLAN_DATEINAME, filterMap)
         + ".pdf";
   }
 
@@ -453,19 +452,19 @@ public class WirtschaftsplanExporterPDFKlasse implements Exporter
   }
 
   @Override
-  public String getTitle(FilterControl control)
+  public String getTitle(Map<Filter, String> filterMap)
   {
     return VorlageUtil
-        .getName(control == null ? VorlageTyp.WIRTSCHAFTSPLAN_MEHRERE_TITEL
-            : VorlageTyp.WIRTSCHAFTSPLAN_TITEL, control);
+        .getName(filterMap == null ? VorlageTyp.WIRTSCHAFTSPLAN_MEHRERE_TITEL
+            : VorlageTyp.WIRTSCHAFTSPLAN_TITEL, filterMap);
   }
 
   @Override
-  public String getSubtitle(FilterControl control)
+  public String getSubtitle(Map<Filter, String> filterMap)
   {
     return VorlageUtil
-        .getName(control == null ? VorlageTyp.WIRTSCHAFTSPLAN_MEHRERE_SUBTITEL
-            : VorlageTyp.WIRTSCHAFTSPLAN_SUBTITEL, control);
+        .getName(filterMap == null ? VorlageTyp.WIRTSCHAFTSPLAN_MEHRERE_SUBTITEL
+            : VorlageTyp.WIRTSCHAFTSPLAN_SUBTITEL, filterMap);
   }
 
   @Override

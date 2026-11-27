@@ -152,20 +152,20 @@ public class MailControl extends FilterControl
   }
 
   @Override
-  protected String getTableTitle()
+  protected String getTableTitle() throws RemoteException
   {
-    return VorlageUtil.getName(VorlageTyp.MAILS_TITEL, this);
+    return VorlageUtil.getName(VorlageTyp.MAILS_TITEL, getFilterText(true));
   }
 
   @Override
-  protected String getTableSubtitle()
+  protected String getTableSubtitle() throws RemoteException
   {
-    return VorlageUtil.getName(VorlageTyp.MAILS_SUBTITEL, this);
+    return VorlageUtil.getName(VorlageTyp.MAILS_SUBTITEL, getFilterText(true));
   }
 
   @Override
-  protected String getTableDateiname()
+  protected String getTableDateiname() throws RemoteException
   {
-    return VorlageUtil.getName(VorlageTyp.MAILS_DATEINAME, this);
+    return VorlageUtil.getName(VorlageTyp.MAILS_DATEINAME, getFilterText(true));
   }
 }

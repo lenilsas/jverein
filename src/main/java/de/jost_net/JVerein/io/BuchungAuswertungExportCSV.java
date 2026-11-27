@@ -34,7 +34,6 @@ import com.itextpdf.text.DocumentException;
 
 import de.jost_net.JVerein.Variable.BuchungMap;
 import de.jost_net.JVerein.gui.control.BuchungsControl;
-import de.jost_net.JVerein.gui.control.FilterControl;
 import de.jost_net.JVerein.gui.dialogs.AbstractPartExportDialog;
 import de.jost_net.JVerein.keys.Filter;
 import de.jost_net.JVerein.keys.VorlageTyp;
@@ -80,18 +79,20 @@ public class BuchungAuswertungExportCSV implements Exporter
   }
 
   @Override
-  public String getDateiname(FilterControl control, Object[] objects)
+  public String getDateiname(Map<Filter, String> filterMap, Object[] objects)
       throws RemoteException
-  {
-    if (control instanceof BuchungsControl bcontrol && bcontrol.getGeldkonto())
+  { // TODO Anlagebuchungen?
+
+    if (filterMap instanceof BuchungsControl bcontrol
+        && bcontrol.getGeldkonto())
     {
-      return VorlageUtil.getName(VorlageTyp.CSVBUCHUNGEN_DATEINAME, control)
+      return VorlageUtil.getName(VorlageTyp.CSVBUCHUNGEN_DATEINAME, filterMap)
           + ".csv";
     }
     else
     {
       return VorlageUtil.getName(VorlageTyp.ANLAGEN_CSVBUCHUNGEN_DATEINAME,
-          control) + ".csv";
+          filterMap) + ".csv";
     }
   }
 

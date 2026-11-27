@@ -13,9 +13,9 @@
  **********************************************************************/
 package de.jost_net.JVerein.io;
 
-import de.jost_net.JVerein.Queries.MitgliedQuery.MitgliedAuswahl;
-import de.jost_net.JVerein.gui.control.FilterControl;
-import de.jost_net.JVerein.gui.control.MitgliedControl;
+import java.util.Map;
+
+import de.jost_net.JVerein.keys.Filter;
 import de.jost_net.JVerein.keys.VorlageTyp;
 import de.jost_net.JVerein.util.VorlageUtil;
 
@@ -24,18 +24,20 @@ public abstract class AuswertungMitgliedAbstractCSV
 {
 
   @Override
-  public String getDateiname(FilterControl control, Object[] objects)
+  public String getDateiname(Map<Filter, String> filterMap, Object[] objects)
   {
-    if (((MitgliedControl) control).getMitgliedAuswahl()
-        .equals(MitgliedAuswahl.MITGLIEDER))
+    // TODO NichtMitglied bestimmung
+    // if (((MitgliedControl) filterMap).getMitgliedAuswahl()
+    // .equals(MitgliedAuswahl.MITGLIEDER))
+    if (true)
     {
       return VorlageUtil.getName(VorlageTyp.AUSWERTUNG_MITGLIED_DATEINAME,
-          control, getExportName()) + ".csv";
+          filterMap, getExportName()) + ".csv";
     }
     else
     {
       return VorlageUtil.getName(VorlageTyp.AUSWERTUNG_NICHT_MITGLIED_DATEINAME,
-          control, getExportName()) + ".csv";
+          filterMap, getExportName()) + ".csv";
     }
   }
 

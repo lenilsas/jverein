@@ -128,20 +128,22 @@ public class ProjektControl extends FilterControl
   }
 
   @Override
-  protected String getTableTitle()
+  protected String getTableTitle() throws RemoteException
   {
-    return VorlageUtil.getName(VorlageTyp.PROJEKTE_TITEL, this);
+    return VorlageUtil.getName(VorlageTyp.PROJEKTE_TITEL, getFilterText(true));
   }
 
   @Override
-  protected String getTableSubtitle()
+  protected String getTableSubtitle() throws RemoteException
   {
-    return VorlageUtil.getName(VorlageTyp.PROJEKTE_SUBTITEL, this);
+    return VorlageUtil.getName(VorlageTyp.PROJEKTE_SUBTITEL,
+        getFilterText(true));
   }
 
   @Override
-  protected String getTableDateiname()
+  protected String getTableDateiname() throws RemoteException
   {
-    return VorlageUtil.getName(VorlageTyp.PROJEKTE_DATEINAME, this);
+    return VorlageUtil.getName(VorlageTyp.PROJEKTE_DATEINAME,
+        getFilterText(true));
   }
 }

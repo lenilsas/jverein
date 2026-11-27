@@ -29,8 +29,8 @@ import org.supercsv.prefs.CsvPreference;
 
 import com.itextpdf.text.DocumentException;
 
-import de.jost_net.JVerein.gui.control.FilterControl;
 import de.jost_net.JVerein.gui.dialogs.AbstractPartExportDialog;
+import de.jost_net.JVerein.keys.Filter;
 import de.jost_net.JVerein.keys.VorlageTyp;
 import de.jost_net.JVerein.rmi.Mitglied;
 import de.jost_net.JVerein.util.VorlageUtil;
@@ -74,10 +74,10 @@ public class AuswertungJahrgangsstatistikCSV
   }
 
   @Override
-  public String getDateiname(FilterControl control, Object[] objects)
+  public String getDateiname(Map<Filter, String> filterMap, Object[] objects)
   {
     return VorlageUtil.getName(
-        VorlageTyp.AUSWERTUNG_JAHRGANGS_STATISTIK_DATEINAME, control) + ".csv";
+        VorlageTyp.AUSWERTUNG_JAHRGANGS_STATISTIK_DATEINAME, filterMap) + ".csv";
   }
 
   @Override

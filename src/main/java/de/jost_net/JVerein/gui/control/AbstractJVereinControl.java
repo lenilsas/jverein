@@ -104,22 +104,28 @@ public abstract class AbstractJVereinControl extends AbstractControl
    * Liefert den Titel für die Tabellenreports
    * 
    * @return
+   * @throws RemoteException
    */
-  abstract protected String getTableTitle() throws ApplicationException;
+  abstract protected String getTableTitle()
+      throws ApplicationException, RemoteException;
 
   /**
    * Liefert den Subtitel für die Tabellenreports
    * 
    * @return
+   * @throws RemoteException
    */
-  abstract protected String getTableSubtitle() throws ApplicationException;
+  abstract protected String getTableSubtitle()
+      throws ApplicationException, RemoteException;
 
   /**
    * Liefert den Dateinamen für die Tabellenreports
    * 
    * @return
+   * @throws RemoteException
    */
-  abstract protected String getTableDateiname() throws ApplicationException;
+  abstract protected String getTableDateiname()
+      throws ApplicationException, RemoteException;
 
   public Column getGesperrtColumn()
   {

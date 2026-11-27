@@ -27,7 +27,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.FileDialog;
 
-import de.jost_net.JVerein.gui.control.AuswertungControl;
 import de.jost_net.JVerein.gui.control.FilterControl;
 import de.jost_net.JVerein.gui.dialogs.AbstractPartExportDialog.ExportArt;
 import de.jost_net.JVerein.gui.parts.HelpButton;
@@ -167,8 +166,11 @@ public class ExportDialog extends AbstractDialog<Object>
 
     try
     {
-      final Map<Filter, String> filter;
-      Map<Filter, String> filterMap;
+      // Filter für Filterparameter-Ausgabe
+      Map<Filter, String> filterAusgabeMap = null;
+
+      // Filter für Vorlagen
+      Map<Filter, String> filterMap = null;
 
       // Die Ausgabe hat eigene Parameter und nutzt nicht die gefilterte
       // Mitgliederliste. Es wird ein eigener AusgabeControl erzeugt mit den
@@ -178,19 +180,26 @@ public class ExportDialog extends AbstractDialog<Object>
         AuswertungExportDialog d = new AuswertungExportDialog(
             AuswertungExportDialog.POSITION_CENTER,
             exporter.getAusgabeParameter());
-        if (d.open() == null)
+
+        filterMap = d.open();
+        if (filterMap == null)
         {
           throw new OperationCanceledException();
         }
-        // Für die Dateinamen und Titel Generierung muss der AusgabeControl
-        // verwendet werden
-        control = d.getData();
-        filter = ((AuswertungControl) control).getFilterText(false);
+        // filterAusgabeMap Wird für Filterbestimmung gebraucht, hier ist kein
+        // Filterparameter Ausgabe möglich
+        filterAusgabeMap = filterMap;
+        if ((exporter.getExportDialogOptions()
+            & AbstractPartExportDialog.OPTION_FILTER_PARAMS) != 0)
+        {
+          throw new RuntimeException(
+              "Anzeige der Filterparameter bei Verwendung von Auswertungs Filtern nicht möglich!");
+        }
       }
-      else
+      else if (control != null)
       {
-        filter = control.getFilterText(false);
-        filterMap = ((AuswertungControl) control).getFilterText(true);
+        filterAusgabeMap = control.getFilterText(false);
+        filterMap = control.getFilterText(true);
       }
 
       ExportLayoutParam params;
@@ -200,8 +209,8 @@ public class ExportDialog extends AbstractDialog<Object>
         // Layout Parameter abfragen
         ExporterExportDialog d = new ExporterExportDialog(
             exporter.hasColortable2(), prefix, ExportArt.PDF,
-            exporter.getTitle(control), exporter.getSubtitle(control),
-            exporter.getDateiname(control, objects),
+            exporter.getTitle(filterMap), exporter.getSubtitle(filterMap),
+            exporter.getDateiname(filterMap, objects),
             exporter.getExportDialogOptions());
         if (!d.open())
         {
@@ -212,8 +221,8 @@ public class ExportDialog extends AbstractDialog<Object>
       else
       {
         params = new ExportLayoutParam();
-        params.setTitle(exporter.getTitle(control));
-        params.setSubtitle(exporter.getSubtitle(control));
+        params.setTitle(exporter.getTitle(filterMap));
+        params.setSubtitle(exporter.getSubtitle(filterMap));
       }
 
       final String filename;
@@ -237,7 +246,7 @@ public class ExportDialog extends AbstractDialog<Object>
         fd.setText(
             "Bitte geben Sie eine Datei ein, in die die Daten exportiert werden sollen.");
         fd.setOverwrite(true);
-        fd.setFileName(exporter.getDateiname(control, objects));
+        fd.setFileName(exporter.getDateiname(filterMap, objects));
         if (fileExtensions != null && fileExtensions.length > 0)
         {
           fd.setFilterExtensions(fileExtensions);
@@ -261,6 +270,7 @@ public class ExportDialog extends AbstractDialog<Object>
       settings.setAttribute("lastdir",
           exporter.isDirectoryExport() ? file.getPath() : file.getParent());
 
+      Map<Filter, String> filter = filterAusgabeMap;
       BackgroundTask t = new BackgroundTask()
       {
         @Override

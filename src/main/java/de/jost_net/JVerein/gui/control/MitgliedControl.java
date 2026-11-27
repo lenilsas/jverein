@@ -408,41 +408,47 @@ public class MitgliedControl extends FilterControl
   }
 
   @Override
-  protected String getTableTitle()
+  protected String getTableTitle() throws RemoteException
   {
     if (isMitglied)
     {
-      return VorlageUtil.getName(VorlageTyp.MITGLIEDER_TITEL, this);
+      return VorlageUtil.getName(VorlageTyp.MITGLIEDER_TITEL,
+          getFilterText(true));
     }
     else
     {
-      return VorlageUtil.getName(VorlageTyp.NICHT_MITGLIEDER_TITEL, this);
+      return VorlageUtil.getName(VorlageTyp.NICHT_MITGLIEDER_TITEL,
+          getFilterText(true));
     }
   }
 
   @Override
-  protected String getTableSubtitle()
+  protected String getTableSubtitle() throws RemoteException
   {
     if (isMitglied)
     {
-      return VorlageUtil.getName(VorlageTyp.MITGLIEDER_SUBTITEL, this);
+      return VorlageUtil.getName(VorlageTyp.MITGLIEDER_SUBTITEL,
+          getFilterText(true));
     }
     else
     {
-      return VorlageUtil.getName(VorlageTyp.NICHT_MITGLIEDER_SUBTITEL, this);
+      return VorlageUtil.getName(VorlageTyp.NICHT_MITGLIEDER_SUBTITEL,
+          getFilterText(true));
     }
   }
 
   @Override
-  protected String getTableDateiname()
+  protected String getTableDateiname() throws RemoteException
   {
     if (isMitglied)
     {
-      return VorlageUtil.getName(VorlageTyp.MITGLIEDER_DATEINAME, this);
+      return VorlageUtil.getName(VorlageTyp.MITGLIEDER_DATEINAME,
+          getFilterText(true));
     }
     else
     {
-      return VorlageUtil.getName(VorlageTyp.NICHT_MITGLIEDER_DATEINAME, this);
+      return VorlageUtil.getName(VorlageTyp.NICHT_MITGLIEDER_DATEINAME,
+          getFilterText(true));
     }
   }
 

@@ -36,8 +36,6 @@ import de.jost_net.JVerein.Variable.SaldoFilterMap;
 import de.jost_net.JVerein.Variable.SpendenbescheinigungMap;
 import de.jost_net.JVerein.Variable.WirtschaftsplanParameterMap;
 import de.jost_net.JVerein.gui.control.AbstractSaldoControl;
-import de.jost_net.JVerein.gui.control.AuswertungControl;
-import de.jost_net.JVerein.gui.control.FilterControl;
 import de.jost_net.JVerein.gui.control.JahresabschlussDetailControl;
 import de.jost_net.JVerein.io.AbrechnungSEPAParam;
 import de.jost_net.JVerein.io.VelocityTool;
@@ -72,6 +70,7 @@ public class VorlageUtil
     return getName(typ, obj, null);
   }
 
+  @SuppressWarnings("unchecked")
   public static String getName(VorlageTyp typ, Object obj, String name)
   {
     Map<String, Object> map = null;
@@ -173,8 +172,6 @@ public class VorlageUtil
         case BELEGE_TITEL:
         case BELEGE_SUBTITEL:
         case BELEGE_DATEINAME:
-          map = new FilterMap().getMap((FilterControl) obj, map);
-          break;
         case AUSWERTUNG_ALTERSJUBILARE_DATEINAME:
         case AUSWERTUNG_ALTERSJUBILARE_TITEL:
         case AUSWERTUNG_ALTERSJUBILARE_SUBTITEL:
@@ -187,7 +184,7 @@ public class VorlageUtil
         case AUSWERTUNG_MITGLIEDER_STATISTIK_DATEINAME:
         case AUSWERTUNG_MITGLIEDER_STATISTIK_TITEL:
         case AUSWERTUNG_MITGLIEDER_STATISTIK_SUBTITEL:
-          map = ((AuswertungControl) obj).getMap(map);
+          map = new FilterMap().getMap((Map<Filter, String>) obj, map);
           break;
         case AUSWERTUNG_MITGLIED_DATEINAME:
         case AUSWERTUNG_MITGLIED_TITEL:
@@ -195,7 +192,7 @@ public class VorlageUtil
         case AUSWERTUNG_NICHT_MITGLIED_DATEINAME:
         case AUSWERTUNG_NICHT_MITGLIED_TITEL:
         case AUSWERTUNG_NICHT_MITGLIED_SUBTITEL:
-          map = new FilterMap().getMap((FilterControl) obj, map);
+          map = new FilterMap().getMap((Map<Filter, String>) obj, map);
           map.put("ausgabe_ausgabe", name);
           break;
         case SPENDENBESCHEINIGUNG_MITGLIED_DATEINAME:

@@ -14,7 +14,6 @@ import java.util.Map;
 import com.itextpdf.text.DocumentException;
 
 import de.jost_net.JVerein.gui.control.BelegControl;
-import de.jost_net.JVerein.gui.control.FilterControl;
 import de.jost_net.JVerein.keys.Filter;
 import de.jost_net.JVerein.keys.VorlageTyp;
 import de.jost_net.JVerein.rmi.AbstractBelegDBObject;
@@ -165,7 +164,7 @@ public class BelegExport implements Exporter
   }
 
   @Override
-  public String getDateiname(FilterControl control, Object[] objects)
+  public String getDateiname(Map<Filter, String> filterMap, Object[] objects)
   {
     return "Belegexport";
   }

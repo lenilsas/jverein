@@ -13,9 +13,9 @@
  **********************************************************************/
 package de.jost_net.JVerein.io;
 
-import de.jost_net.JVerein.Queries.MitgliedQuery.MitgliedAuswahl;
-import de.jost_net.JVerein.gui.control.FilterControl;
-import de.jost_net.JVerein.gui.control.MitgliedControl;
+import java.util.Map;
+
+import de.jost_net.JVerein.keys.Filter;
 import de.jost_net.JVerein.keys.VorlageTyp;
 import de.jost_net.JVerein.util.VorlageUtil;
 
@@ -23,34 +23,37 @@ public abstract class AuswertungMitgliedAbstract implements Exporter
 {
 
   @Override
-  public String getTitle(FilterControl control)
+  public String getTitle(Map<Filter, String> filterMap)
   {
-    if (((MitgliedControl) control).getMitgliedAuswahl()
-        .equals(MitgliedAuswahl.MITGLIEDER))
+    // TODO NichtMitglied bestimmung
+    // if (((MitgliedControl) filterMap).getMitgliedAuswahl()
+    // .equals(MitgliedAuswahl.MITGLIEDER))
+    if (true)
     {
-      return VorlageUtil.getName(VorlageTyp.AUSWERTUNG_MITGLIED_TITEL, control,
-          getExportName());
+      return VorlageUtil.getName(VorlageTyp.AUSWERTUNG_MITGLIED_TITEL,
+          filterMap, getExportName());
     }
     else
     {
       return VorlageUtil.getName(VorlageTyp.AUSWERTUNG_NICHT_MITGLIED_TITEL,
-          control, getExportName());
+          filterMap, getExportName());
     }
   }
 
   @Override
-  public String getSubtitle(FilterControl control)
-  {
-    if (((MitgliedControl) control).getMitgliedAuswahl()
-        .equals(MitgliedAuswahl.MITGLIEDER))
+  public String getSubtitle(Map<Filter, String> filterMap)
+  {// TODO NichtMitglied bestimmung
+   // if (((MitgliedControl) filterMap).getMitgliedAuswahl()
+   // .equals(MitgliedAuswahl.MITGLIEDER))
+    if (true)
     {
       return VorlageUtil.getName(VorlageTyp.AUSWERTUNG_MITGLIED_SUBTITEL,
-          control, getExportName());
+          filterMap, getExportName());
     }
     else
     {
       return VorlageUtil.getName(VorlageTyp.AUSWERTUNG_NICHT_MITGLIED_SUBTITEL,
-          control, getExportName());
+          filterMap, getExportName());
     }
   }
 

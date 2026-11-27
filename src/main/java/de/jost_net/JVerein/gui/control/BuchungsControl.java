@@ -321,41 +321,47 @@ public class BuchungsControl extends FilterControl
   }
 
   @Override
-  protected String getTableTitle()
+  protected String getTableTitle() throws RemoteException
   {
     if (geldkonto)
     {
-      return VorlageUtil.getName(VorlageTyp.BUCHUNGEN_TITEL, this);
+      return VorlageUtil.getName(VorlageTyp.BUCHUNGEN_TITEL,
+          getFilterText(true));
     }
     else
     {
-      return VorlageUtil.getName(VorlageTyp.ANLAGEN_BUCHUNGEN_TITEL, this);
+      return VorlageUtil.getName(VorlageTyp.ANLAGEN_BUCHUNGEN_TITEL,
+          getFilterText(true));
     }
   }
 
   @Override
-  protected String getTableSubtitle()
+  protected String getTableSubtitle() throws RemoteException
   {
     if (geldkonto)
     {
-      return VorlageUtil.getName(VorlageTyp.BUCHUNGEN_SUBTITEL, this);
+      return VorlageUtil.getName(VorlageTyp.BUCHUNGEN_SUBTITEL,
+          getFilterText(true));
     }
     else
     {
-      return VorlageUtil.getName(VorlageTyp.ANLAGEN_BUCHUNGEN_SUBTITEL, this);
+      return VorlageUtil.getName(VorlageTyp.ANLAGEN_BUCHUNGEN_SUBTITEL,
+          getFilterText(true));
     }
   }
 
   @Override
-  protected String getTableDateiname()
+  protected String getTableDateiname() throws RemoteException
   {
     if (geldkonto)
     {
-      return VorlageUtil.getName(VorlageTyp.BUCHUNGEN_DATEINAME, this);
+      return VorlageUtil.getName(VorlageTyp.BUCHUNGEN_DATEINAME,
+          getFilterText(true));
     }
     else
     {
-      return VorlageUtil.getName(VorlageTyp.ANLAGEN_BUCHUNGEN_DATEINAME, this);
+      return VorlageUtil.getName(VorlageTyp.ANLAGEN_BUCHUNGEN_DATEINAME,
+          getFilterText(true));
     }
   }
 

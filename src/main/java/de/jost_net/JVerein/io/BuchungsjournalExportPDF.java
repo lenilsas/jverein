@@ -32,7 +32,6 @@ import com.itextpdf.text.Element;
 import de.jost_net.JVerein.Einstellungen;
 import de.jost_net.JVerein.Einstellungen.Property;
 import de.jost_net.JVerein.gui.control.BuchungsControl;
-import de.jost_net.JVerein.gui.control.FilterControl;
 import de.jost_net.JVerein.gui.dialogs.AbstractPartExportDialog;
 import de.jost_net.JVerein.gui.dialogs.BuchungsjournalSortDialog;
 import de.jost_net.JVerein.gui.formatter.BuchungsartFormatter;
@@ -88,32 +87,35 @@ public class BuchungsjournalExportPDF implements Exporter
   }
 
   @Override
-  public String getDateiname(FilterControl control, Object[] objects)
+  public String getDateiname(Map<Filter, String> filterMap, Object[] objects)
       throws RemoteException
   {
-    if (control instanceof BuchungsControl bcontrol && bcontrol.getGeldkonto())
-
+    // TODO Anlagebuchungen?
+    if (filterMap instanceof BuchungsControl bcontrol
+        && bcontrol.getGeldkonto())
     {
-      return VorlageUtil.getName(VorlageTyp.BUCHUNGSJOURNAL_DATEINAME, control)
-          + ".pdf";
+      return VorlageUtil.getName(VorlageTyp.BUCHUNGSJOURNAL_DATEINAME,
+          filterMap) + ".pdf";
     }
     else
     {
       return VorlageUtil.getName(VorlageTyp.ANLAGEN_BUCHUNGSJOURNAL_DATEINAME,
-          control) + ".pdf";
+          filterMap) + ".pdf";
     }
   }
 
   @Override
-  public String getTitle(FilterControl control)
-  {
-    return VorlageUtil.getName(VorlageTyp.BUCHUNGSJOURNAL_TITEL, control);
+  public String getTitle(Map<Filter, String> filterMap)
+  { // TODO Anlagebuchungen?
+
+    return VorlageUtil.getName(VorlageTyp.BUCHUNGSJOURNAL_TITEL, filterMap);
   }
 
   @Override
-  public String getSubtitle(FilterControl control)
-  {
-    return VorlageUtil.getName(VorlageTyp.BUCHUNGSJOURNAL_SUBTITEL, control);
+  public String getSubtitle(Map<Filter, String> filterMap)
+  { // TODO Anlagebuchungen?
+
+    return VorlageUtil.getName(VorlageTyp.BUCHUNGSJOURNAL_SUBTITEL, filterMap);
   }
 
   @Override

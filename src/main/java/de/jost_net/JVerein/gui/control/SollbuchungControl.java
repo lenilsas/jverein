@@ -140,21 +140,24 @@ public class SollbuchungControl extends FilterControl
   }
 
   @Override
-  protected String getTableTitle()
+  protected String getTableTitle() throws RemoteException
   {
-    return VorlageUtil.getName(VorlageTyp.SOLLBUCHUNGEN_TITEL, this);
+    return VorlageUtil.getName(VorlageTyp.SOLLBUCHUNGEN_TITEL,
+        getFilterText(true));
   }
 
   @Override
-  protected String getTableSubtitle()
+  protected String getTableSubtitle() throws RemoteException
   {
-    return VorlageUtil.getName(VorlageTyp.SOLLBUCHUNGEN_SUBTITEL, this);
+    return VorlageUtil.getName(VorlageTyp.SOLLBUCHUNGEN_SUBTITEL,
+        getFilterText(true));
   }
 
   @Override
-  protected String getTableDateiname()
+  protected String getTableDateiname() throws RemoteException
   {
-    return VorlageUtil.getName(VorlageTyp.SOLLBUCHUNGEN_DATEINAME, this);
+    return VorlageUtil.getName(VorlageTyp.SOLLBUCHUNGEN_DATEINAME,
+        getFilterText(true));
   }
 
 }

@@ -36,7 +36,6 @@ import org.supercsv.prefs.CsvPreference;
 
 import com.itextpdf.text.DocumentException;
 
-import de.jost_net.JVerein.gui.control.FilterControl;
 import de.jost_net.JVerein.gui.dialogs.AbstractPartExportDialog;
 import de.jost_net.JVerein.keys.Filter;
 import de.jost_net.JVerein.keys.VorlageTyp;
@@ -135,7 +134,7 @@ public class FormularfelderExportCSV implements Exporter
   }
 
   @Override
-  public String getDateiname(FilterControl control, Object[] objects)
+  public String getDateiname(Map<Filter, String> filterMap, Object[] objects)
   {
     try
     {

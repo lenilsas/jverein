@@ -20,15 +20,16 @@ package de.jost_net.JVerein.io;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.rmi.RemoteException;
+import java.util.Map;
 
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.Paragraph;
 
-import de.jost_net.JVerein.gui.control.FilterControl;
 import de.jost_net.JVerein.gui.dialogs.AbstractPartExportDialog;
 import de.jost_net.JVerein.io.Adressbuch.Adressaufbereitung;
+import de.jost_net.JVerein.keys.Filter;
 import de.jost_net.JVerein.keys.VorlageTyp;
 import de.jost_net.JVerein.rmi.Mitglied;
 import de.jost_net.JVerein.util.VorlageUtil;
@@ -77,10 +78,10 @@ public class AuswertungAltersjubilarePDF
   }
 
   @Override
-  public String getDateiname(FilterControl control, Object[] objects)
+  public String getDateiname(Map<Filter, String> filterMap, Object[] objects)
   {
     return VorlageUtil.getName(VorlageTyp.AUSWERTUNG_ALTERSJUBILARE_DATEINAME,
-        control) + ".pdf";
+        filterMap) + ".pdf";
   }
 
   @Override

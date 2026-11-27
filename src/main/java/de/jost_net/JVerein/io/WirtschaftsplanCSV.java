@@ -34,7 +34,6 @@ import org.supercsv.prefs.CsvPreference;
 
 import de.jost_net.JVerein.Einstellungen;
 import de.jost_net.JVerein.Einstellungen.Property;
-import de.jost_net.JVerein.gui.control.FilterControl;
 import de.jost_net.JVerein.gui.control.WirtschaftsplanNode;
 import de.jost_net.JVerein.gui.dialogs.AbstractPartExportDialog;
 import de.jost_net.JVerein.keys.BuchungsartSort;
@@ -242,11 +241,11 @@ public class WirtschaftsplanCSV implements Exporter
   }
 
   @Override
-  public String getDateiname(FilterControl control, Object[] objects)
+  public String getDateiname(Map<Filter, String> filterMap, Object[] objects)
   {
     return VorlageUtil
-        .getName(control == null ? VorlageTyp.WIRTSCHAFTSPLAN_MEHRERE_DATEINAME
-            : VorlageTyp.WIRTSCHAFTSPLAN_DATEINAME, control)
+        .getName(filterMap == null ? VorlageTyp.WIRTSCHAFTSPLAN_MEHRERE_DATEINAME
+            : VorlageTyp.WIRTSCHAFTSPLAN_DATEINAME, filterMap)
         + ".csv";
   }
 

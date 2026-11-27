@@ -28,7 +28,6 @@ import java.util.TreeMap;
 import com.itextpdf.text.DocumentException;
 
 import de.jost_net.JVerein.Einstellungen;
-import de.jost_net.JVerein.gui.control.FilterControl;
 import de.jost_net.JVerein.gui.input.GeschlechtInput;
 import de.jost_net.JVerein.keys.Filter;
 import de.jost_net.JVerein.keys.VorlageTyp;
@@ -173,17 +172,17 @@ public abstract class AuswertungJahrgangsstatistikAbstract implements Exporter
   protected abstract void close() throws IOException, DocumentException;
 
   @Override
-  public String getTitle(FilterControl control)
+  public String getTitle(Map<Filter, String> filterMap)
   {
     return VorlageUtil.getName(VorlageTyp.AUSWERTUNG_JAHRGANGS_STATISTIK_TITEL,
-        control);
+        filterMap);
   }
 
   @Override
-  public String getSubtitle(FilterControl control)
+  public String getSubtitle(Map<Filter, String> filterMap)
   {
     return VorlageUtil
-        .getName(VorlageTyp.AUSWERTUNG_JAHRGANGS_STATISTIK_SUBTITEL, control);
+        .getName(VorlageTyp.AUSWERTUNG_JAHRGANGS_STATISTIK_SUBTITEL, filterMap);
   }
 
   @Override

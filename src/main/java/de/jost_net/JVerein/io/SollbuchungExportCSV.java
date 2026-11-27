@@ -35,7 +35,6 @@ import com.itextpdf.text.DocumentException;
 import de.jost_net.JVerein.Einstellungen;
 import de.jost_net.JVerein.Variable.MitgliedMap;
 import de.jost_net.JVerein.Variable.SollbuchungMap;
-import de.jost_net.JVerein.gui.control.FilterControl;
 import de.jost_net.JVerein.gui.dialogs.AbstractPartExportDialog;
 import de.jost_net.JVerein.io.Adressbuch.Adressaufbereitung;
 import de.jost_net.JVerein.keys.Filter;
@@ -147,9 +146,9 @@ public class SollbuchungExportCSV implements Exporter
   }
 
   @Override
-  public String getDateiname(FilterControl control, Object[] objects)
+  public String getDateiname(Map<Filter, String> filterMap, Object[] objects)
   {
-    return VorlageUtil.getName(VorlageTyp.SOLLBUCHUNGEN_DATEINAME, control)
+    return VorlageUtil.getName(VorlageTyp.SOLLBUCHUNGEN_DATEINAME, filterMap)
         + ".csv";
   }
 

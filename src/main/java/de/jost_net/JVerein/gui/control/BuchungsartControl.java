@@ -199,20 +199,23 @@ public class BuchungsartControl extends FilterControl
   }
 
   @Override
-  protected String getTableTitle()
+  protected String getTableTitle() throws RemoteException
   {
-    return VorlageUtil.getName(VorlageTyp.BUCHUNGSARTEN_TITEL, this);
+    return VorlageUtil.getName(VorlageTyp.BUCHUNGSARTEN_TITEL,
+        getFilterText(true));
   }
 
   @Override
-  protected String getTableSubtitle()
+  protected String getTableSubtitle() throws RemoteException
   {
-    return VorlageUtil.getName(VorlageTyp.BUCHUNGSARTEN_SUBTITEL, this);
+    return VorlageUtil.getName(VorlageTyp.BUCHUNGSARTEN_SUBTITEL,
+        getFilterText(true));
   }
 
   @Override
-  protected String getTableDateiname()
+  protected String getTableDateiname() throws RemoteException
   {
-    return VorlageUtil.getName(VorlageTyp.BUCHUNGSARTEN_DATEINAME, this);
+    return VorlageUtil.getName(VorlageTyp.BUCHUNGSARTEN_DATEINAME,
+        getFilterText(true));
   }
 }
