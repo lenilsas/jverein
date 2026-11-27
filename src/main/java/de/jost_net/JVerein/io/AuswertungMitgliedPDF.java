@@ -33,6 +33,7 @@ import de.jost_net.JVerein.gui.dialogs.AbstractPartExportDialog;
 import de.jost_net.JVerein.io.Adressbuch.Adressaufbereitung;
 import de.jost_net.JVerein.keys.Filter;
 import de.jost_net.JVerein.rmi.Mitglied;
+import de.jost_net.JVerein.rmi.Mitgliedstyp;
 import de.jost_net.JVerein.server.Tools.EigenschaftenTool;
 import de.jost_net.JVerein.util.JVDateFormatTTMMJJJJ;
 import de.willuhn.jameica.gui.GUI;
@@ -51,7 +52,21 @@ public class AuswertungMitgliedPDF extends AuswertungMitgliedAbstractPDF
   {
     try
     {
-      String mitgliedstyp = filterMap.get(Filter.MITGLIEDSTYP);
+      String mitgliedstyp = "";
+      if (objects.length > 0 && objects[0] instanceof Mitglied m)
+      {
+        // wenn es den Mitgliedstyp-Filter nicht gibt, und in der Liste
+        // Nicht-Mitglieder sind, ist es die ungefilterte Nicht-Mitglied Liste.
+        if (filterMap.get(Filter.MITGLIEDSTYP) == null
+            && !Mitgliedstyp.MITGLIED.equals(m.getMitgliedstyp().getID()))
+        {
+          mitgliedstyp = "Nicht-Mitglieder";
+        }
+        else
+        {
+          mitgliedstyp = m.getMitgliedstyp().getBezeichnungPlural();
+        }
+      }
 
       FileOutputStream fos = new FileOutputStream(file);
       Reporter reporter = new Reporter(fos, params);

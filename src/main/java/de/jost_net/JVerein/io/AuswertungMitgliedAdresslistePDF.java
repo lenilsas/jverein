@@ -33,6 +33,7 @@ import de.jost_net.JVerein.gui.dialogs.AbstractPartExportDialog;
 import de.jost_net.JVerein.io.Adressbuch.Adressaufbereitung;
 import de.jost_net.JVerein.keys.Filter;
 import de.jost_net.JVerein.rmi.Mitglied;
+import de.jost_net.JVerein.rmi.Mitgliedstyp;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
@@ -50,7 +51,21 @@ public class AuswertungMitgliedAdresslistePDF
   {
     try
     {
-      String mitgliedstyp = filterMap.get(Filter.MITGLIEDSTYP);
+      String mitgliedstyp = "";
+      if (objects.length > 0 && objects[0] instanceof Mitglied m)
+      {
+        // wenn es den Mitgliedstyp-Filter nicht gibt, und in der Liste
+        // Nicht-Mitglieder sind, ist es die ungefilterte Nicht-Mitglied Liste.
+        if (filterMap.get(Filter.MITGLIEDSTYP) == null
+            && !Mitgliedstyp.MITGLIED.equals(m.getMitgliedstyp().getID()))
+        {
+          mitgliedstyp = "Nicht-Mitglieder";
+        }
+        else
+        {
+          mitgliedstyp = m.getMitgliedstyp().getBezeichnungPlural();
+        }
+      }
 
       FileOutputStream fos = new FileOutputStream(file);
       Reporter reporter = new Reporter(fos, params);
@@ -109,9 +124,9 @@ public class AuswertungMitgliedAdresslistePDF
       }
       reporter.closeTable();
 
-      reporter.add(new Paragraph(String.format("Anzahl %s: %d",
-          mitgliedstyp == null ? "Nicht-Mitglieder" : mitgliedstyp,
-          objects.length), params.getFontNormal()));
+      reporter.add(new Paragraph(
+          String.format("Anzahl %s: %d", mitgliedstyp, objects.length),
+          params.getFontNormal()));
       if (params.getFilterParameter())
       {
         reporter.addParams(filterMap, params);
@@ -121,7 +136,9 @@ public class AuswertungMitgliedAdresslistePDF
       GUI.getStatusBar().setSuccessText(
           String.format("Auswertung fertig. %d Sätze.", objects.length));
     }
-    catch (Exception e)
+    catch (
+
+    Exception e)
     {
       Logger.error("error while creating report", e);
       throw new ApplicationException("Fehler", e);
