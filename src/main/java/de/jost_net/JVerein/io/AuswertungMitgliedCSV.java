@@ -33,10 +33,8 @@ import com.itextpdf.text.DocumentException;
 
 import de.jost_net.JVerein.Einstellungen;
 import de.jost_net.JVerein.Variable.MitgliedMap;
-import de.jost_net.JVerein.gui.control.FilterControl;
 import de.jost_net.JVerein.gui.dialogs.AbstractPartExportDialog;
-import de.jost_net.JVerein.gui.view.MitgliedListeView;
-import de.jost_net.JVerein.gui.view.NichtMitgliedListeView;
+import de.jost_net.JVerein.keys.Filter;
 import de.jost_net.JVerein.rmi.Mitglied;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
@@ -46,21 +44,23 @@ public class AuswertungMitgliedCSV extends AuswertungMitgliedAbstractCSV
 {
 
   @Override
-  public void doExport(Object[] objects, FilterControl control, File file,
-      ExportLayoutParam params, ProgressMonitor monitor)
+  public void doExport(Object[] objects, Map<Filter, String> filterMap,
+      File file, ExportLayoutParam params, ProgressMonitor monitor)
       throws RemoteException, ApplicationException, FileNotFoundException,
       DocumentException, IOException
   {
-    /*
-     * objects[0] ist ArrayList<Mitglied>, objects[1] ist der Filtertext,
-     * objects[2] ist Mitgliedstyp
-     */
-    @SuppressWarnings("unchecked")
-    ArrayList<Mitglied> list = (ArrayList<Mitglied>) objects[0];
-    go(list, file);
+    ArrayList<Mitglied> mitglieder = new ArrayList<>();
+    for (Object o : objects)
+    {
+      if (o instanceof Mitglied m)
+      {
+        mitglieder.add(m);
+      }
+    }
+    go(mitglieder, file);
   }
 
-  public void go(ArrayList<Mitglied> list, File file)
+  public void go(ArrayList<Mitglied> mitglieder, File file)
       throws ApplicationException
   {
     try
@@ -69,9 +69,9 @@ public class AuswertungMitgliedCSV extends AuswertungMitgliedAbstractCSV
           CsvPreference.EXCEL_NORTH_EUROPE_PREFERENCE);
 
       Mitglied m = null;
-      if (list.size() > 0)
+      if (mitglieder.size() > 0)
       {
-        m = list.get(0);
+        m = mitglieder.get(0);
       }
       else
       {
@@ -88,7 +88,7 @@ public class AuswertungMitgliedCSV extends AuswertungMitgliedAbstractCSV
 
       writer.writeHeader(header);
 
-      for (Mitglied mit : list)
+      for (Mitglied mit : mitglieder)
       {
         writer.write(new MitgliedMap().getMap(mit, null), header, processors);
       }
@@ -124,8 +124,7 @@ public class AuswertungMitgliedCSV extends AuswertungMitgliedAbstractCSV
   @Override
   public IOFormat[] getIOFormats(Class<?> objectType)
   {
-    if (objectType != MitgliedListeView.class
-        && objectType != NichtMitgliedListeView.class)
+    if (!Mitglied.class.isAssignableFrom(objectType))
     {
       return null;
     }

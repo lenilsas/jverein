@@ -30,7 +30,6 @@ import de.jost_net.JVerein.Einstellungen;
 import de.jost_net.JVerein.Einstellungen.Property;
 import de.jost_net.JVerein.gui.control.FilterControl;
 import de.jost_net.JVerein.keys.Filter;
-import de.jost_net.JVerein.keys.Jubeljahr;
 import de.jost_net.JVerein.keys.VorlageTyp;
 import de.jost_net.JVerein.rmi.Mitglied;
 import de.jost_net.JVerein.server.MitgliedUtils;
@@ -53,17 +52,13 @@ public abstract class AuswertungMitgliedschaftsjubilareAbstract
   protected ExportLayoutParam params;
 
   @Override
-  public void doExport(final Object[] objects, FilterControl control, File file,
-      ExportLayoutParam params, ProgressMonitor monitor)
+  public void doExport(final Object[] objects, Map<Filter, String> filterMap,
+      File file, ExportLayoutParam params, ProgressMonitor monitor)
       throws ApplicationException, DocumentException, IOException
   {
-    /*
-     * objects[0] ist ArrayList<Mitglied>, objects[1] ist der Filtertext,
-     * objects[2] ist Mitgliedstyp, objects[3] ist der Filter
-     */
     this.file = file;
     this.params = params;
-    setzeParameterDerListe(objects);
+    setzeParameterDerListe(filterMap);
     DBIterator<Mitglied> mitgliederListe = ladeMitgliederAktivImGewaehltenJahr();
 
     JubilaeenParser jp = holeJubelJahreAusEinstellungen();
@@ -132,20 +127,14 @@ public abstract class AuswertungMitgliedschaftsjubilareAbstract
    * jahr - für welches Jahr soll die Liste erstellt werden 2. jubilarStartAlter
    * - ab welchem Alter beginnt die Zählung der Jubeljahre
    * 
-   * @param objects
+   * @param filterMap
    * @throws RemoteException
    * @throws ApplicationException
    */
-  private void setzeParameterDerListe(final Object[] objects)
+  private void setzeParameterDerListe(final Map<Filter, String> filterMap)
       throws RemoteException, ApplicationException
   {
-    /*
-     * objects[0] sind die Ausgabeparameter Filter, objects[1] ist der
-     * Filtertext, objects[2] ist Mitgliedstyp, objects[3] ist der Filter
-     */
-    @SuppressWarnings("unchecked")
-    Map<Filter, Object> filter = (Map<Filter, Object>) objects[0];
-    jahr = ((Jubeljahr) filter.get(Filter.JUBELJAHR)).getKey();
+    jahr = Integer.parseInt(filterMap.get(Filter.JUBELJAHR));
     if (jahr == null)
     {
       throw new ApplicationException("Auswertungsjahr ist leer");
@@ -168,17 +157,17 @@ public abstract class AuswertungMitgliedschaftsjubilareAbstract
   protected abstract void close() throws IOException, DocumentException;
 
   @Override
-  public String getTitle(FilterControl object)
+  public String getTitle(FilterControl control)
   {
     return VorlageUtil
-        .getName(VorlageTyp.AUSWERTUNG_MITGLIEDSCHAFTSJUBILARE_TITEL, object);
+        .getName(VorlageTyp.AUSWERTUNG_MITGLIEDSCHAFTSJUBILARE_TITEL, control);
   }
 
   @Override
-  public String getSubtitle(FilterControl object)
+  public String getSubtitle(FilterControl control)
   {
     return VorlageUtil.getName(
-        VorlageTyp.AUSWERTUNG_MITGLIEDSCHAFTSJUBILARE_SUBTITEL, object);
+        VorlageTyp.AUSWERTUNG_MITGLIEDSCHAFTSJUBILARE_SUBTITEL, control);
   }
 
   @Override

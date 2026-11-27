@@ -36,6 +36,7 @@ import de.jost_net.JVerein.Variable.BuchungMap;
 import de.jost_net.JVerein.gui.control.BuchungsControl;
 import de.jost_net.JVerein.gui.control.FilterControl;
 import de.jost_net.JVerein.gui.dialogs.AbstractPartExportDialog;
+import de.jost_net.JVerein.keys.Filter;
 import de.jost_net.JVerein.keys.VorlageTyp;
 import de.jost_net.JVerein.rmi.Buchung;
 import de.jost_net.JVerein.util.VorlageUtil;
@@ -95,8 +96,8 @@ public class BuchungAuswertungExportCSV implements Exporter
   }
 
   @Override
-  public void doExport(Object[] objects, FilterControl control, File file,
-      ExportLayoutParam params, ProgressMonitor monitor)
+  public void doExport(Object[] objects, Map<Filter, String> filterMap,
+      File file, ExportLayoutParam params, ProgressMonitor monitor)
       throws RemoteException, ApplicationException, FileNotFoundException,
       DocumentException, IOException
   {

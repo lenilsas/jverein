@@ -21,7 +21,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.Map;
 
 import com.itextpdf.text.DocumentException;
@@ -30,14 +29,10 @@ import com.itextpdf.text.Paragraph;
 
 import de.jost_net.JVerein.Einstellungen;
 import de.jost_net.JVerein.Einstellungen.Property;
-import de.jost_net.JVerein.gui.control.FilterControl;
 import de.jost_net.JVerein.gui.dialogs.AbstractPartExportDialog;
-import de.jost_net.JVerein.gui.view.MitgliedListeView;
-import de.jost_net.JVerein.gui.view.NichtMitgliedListeView;
 import de.jost_net.JVerein.io.Adressbuch.Adressaufbereitung;
 import de.jost_net.JVerein.keys.Filter;
 import de.jost_net.JVerein.rmi.Mitglied;
-import de.jost_net.JVerein.rmi.Mitgliedstyp;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
@@ -47,22 +42,16 @@ public class AuswertungMitgliedAdresslistePDF
     extends AuswertungMitgliedAbstractPDF
 {
 
-  @SuppressWarnings("unchecked")
   @Override
-  public void doExport(Object[] objects, FilterControl control, File file,
-      ExportLayoutParam params, ProgressMonitor monitor)
+  public void doExport(Object[] objects, Map<Filter, String> filterMap,
+      File file, ExportLayoutParam params, ProgressMonitor monitor)
       throws RemoteException, ApplicationException, FileNotFoundException,
       DocumentException, IOException
   {
-    /*
-     * objects[0] ist ArrayList<Mitglied>, objects[1] ist der Filtertext,
-     * objects[2] ist Mitgliedstyp, objects[3] ist der Filter
-     */
-    ArrayList<Mitglied> list = (ArrayList<Mitglied>) objects[0];
-    Map<Filter, String> filterparams = (Map<Filter, String>) objects[1];
-    Mitgliedstyp mitgliedstyp = (Mitgliedstyp) objects[2];
     try
     {
+      String mitgliedstyp = filterMap.get(Filter.MITGLIEDSTYP);
+
       FileOutputStream fos = new FileOutputStream(file);
       Reporter reporter = new Reporter(fos, params);
 
@@ -79,58 +68,58 @@ public class AuswertungMitgliedAdresslistePDF
             params.getColorHeader(), params.getFontHeader());
       reporter.createHeader(100, Element.ALIGN_CENTER);
 
-      for (int i = 0; i < list.size(); i++)
+      for (Object o : objects)
       {
-        Mitglied m = list.get(i);
-        reporter.addColumn(Adressaufbereitung.getNameVorname(m),
-            Element.ALIGN_LEFT, params.getFontNormal());
-        reporter.addColumn(Adressaufbereitung.getAnschrift(m),
-            Element.ALIGN_LEFT, params.getFontNormal());
-        String telefon = "";
-        if (m.getTelefonprivat() != null && m.getTelefonprivat().length() > 0)
+        if (o instanceof Mitglied m)
         {
-          telefon = m.getTelefonprivat();
-        }
-        if (m.getTelefondienstlich() != null
-            && m.getTelefondienstlich().length() > 0)
-        {
-          telefon += "\n" + "dienstl: " + m.getTelefondienstlich();
-        }
-        if (m.getHandy() != null && m.getHandy().length() > 0)
-        {
-          telefon += "\n" + "Handy: " + m.getHandy();
-        }
-        reporter.addColumn(telefon, Element.ALIGN_LEFT, params.getFontNormal());
-        // Bei verwendung von mehreren Mailadresse im Fomar
-        // NAME:Mail1@xx.de,mail2@xx.de; trennen wir die Mailadressen
-        String mail = m.getEmail();
-        if (mail.indexOf(":") > 0)
-        {
-          mail = mail.substring(mail.indexOf(":") + 1).replace(",", "\n")
-              .replace(";", "").trim();
-        }
-        reporter.addColumn(mail, Element.ALIGN_LEFT, params.getFontNormal());
-        if ((Boolean) Einstellungen
-            .getEinstellung(Property.GEBURTSDATUMPFLICHT))
-          reporter.addColumn(m.getGeburtsdatum(), Element.ALIGN_LEFT,
+          reporter.addColumn(Adressaufbereitung.getNameVorname(m),
+              Element.ALIGN_LEFT, params.getFontNormal());
+          reporter.addColumn(Adressaufbereitung.getAnschrift(m),
+              Element.ALIGN_LEFT, params.getFontNormal());
+          String telefon = "";
+          if (m.getTelefonprivat() != null && m.getTelefonprivat().length() > 0)
+          {
+            telefon = m.getTelefonprivat();
+          }
+          if (m.getTelefondienstlich() != null
+              && m.getTelefondienstlich().length() > 0)
+          {
+            telefon += "\n" + "dienstl: " + m.getTelefondienstlich();
+          }
+          if (m.getHandy() != null && m.getHandy().length() > 0)
+          {
+            telefon += "\n" + "Handy: " + m.getHandy();
+          }
+          reporter.addColumn(telefon, Element.ALIGN_LEFT,
               params.getFontNormal());
+          // Bei verwendung von mehreren Mailadresse im Fomar
+          // NAME:Mail1@xx.de,mail2@xx.de; trennen wir die Mailadressen
+          String mail = m.getEmail();
+          if (mail.indexOf(":") > 0)
+          {
+            mail = mail.substring(mail.indexOf(":") + 1).replace(",", "\n")
+                .replace(";", "").trim();
+          }
+          reporter.addColumn(mail, Element.ALIGN_LEFT, params.getFontNormal());
+          if ((Boolean) Einstellungen
+              .getEinstellung(Property.GEBURTSDATUMPFLICHT))
+            reporter.addColumn(m.getGeburtsdatum(), Element.ALIGN_LEFT,
+                params.getFontNormal());
+        }
       }
       reporter.closeTable();
 
-      reporter.add(new Paragraph(
-          String.format("Anzahl %s: %d",
-              mitgliedstyp == null ? "Nicht-Mitglieder"
-                  : mitgliedstyp.getBezeichnungPlural(),
-              list.size()),
-          params.getFontNormal()));
+      reporter.add(new Paragraph(String.format("Anzahl %s: %d",
+          mitgliedstyp == null ? "Nicht-Mitglieder" : mitgliedstyp,
+          objects.length), params.getFontNormal()));
       if (params.getFilterParameter())
       {
-        reporter.addParams(filterparams, params);
+        reporter.addParams(filterMap, params);
       }
       reporter.close();
       fos.close();
       GUI.getStatusBar().setSuccessText(
-          String.format("Auswertung fertig. %d Sätze.", list.size()));
+          String.format("Auswertung fertig. %d Sätze.", objects.length));
     }
     catch (Exception e)
     {
@@ -148,8 +137,7 @@ public class AuswertungMitgliedAdresslistePDF
   @Override
   public IOFormat[] getIOFormats(Class<?> objectType)
   {
-    if (objectType != MitgliedListeView.class
-        && objectType != NichtMitgliedListeView.class)
+    if (!Mitglied.class.isAssignableFrom(objectType))
     {
       return null;
     }

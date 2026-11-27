@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.rmi.RemoteException;
+import java.util.Map;
 
 import com.itextpdf.text.DocumentException;
 
@@ -48,7 +49,7 @@ public interface Exporter extends IO
    * 
    * @param objects
    *          die zu exportierenden Objekte.
-   * @param control
+   * @param filterMap
    * @param file
    *          File-Object für die Ausgabe. Der Exporter muss die Datei selbe
    *          erstellen und schliessen!
@@ -58,8 +59,8 @@ public interface Exporter extends IO
    * @throws RemoteException
    * @throws ApplicationException
    */
-  public void doExport(Object[] objects, FilterControl control, File file,
-      ExportLayoutParam params, ProgressMonitor monitor)
+  public void doExport(Object[] objects, Map<Filter, String> filterMap,
+      File file, ExportLayoutParam params, ProgressMonitor monitor)
       throws RemoteException, ApplicationException, FileNotFoundException,
       DocumentException, IOException;
 
@@ -78,7 +79,7 @@ public interface Exporter extends IO
    * 
    * @return Titel
    */
-  default String getTitle(FilterControl object)
+  default String getTitle(FilterControl control)
   {
     return null;
   }
@@ -88,7 +89,7 @@ public interface Exporter extends IO
    * 
    * @return Subtitle
    */
-  default String getSubtitle(FilterControl object)
+  default String getSubtitle(FilterControl control)
   {
     return null;
   }
@@ -96,10 +97,9 @@ public interface Exporter extends IO
   /**
    * Sagt, ob eine zweite Tabellenhintergrund Farbe unterstützt wird
    * 
-   * @param object
    * @return
    */
-  default boolean hasColortable2(FilterControl object)
+  default boolean hasColortable2()
   {
     return false;
   }

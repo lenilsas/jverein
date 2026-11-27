@@ -24,6 +24,8 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.util.List;
+import java.util.Map;
+
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
@@ -37,6 +39,7 @@ import de.jost_net.JVerein.gui.dialogs.AbstractPartExportDialog;
 import de.jost_net.JVerein.gui.formatter.BuchungsartFormatter;
 import de.jost_net.JVerein.gui.formatter.BuchungsklasseFormatter;
 import de.jost_net.JVerein.keys.ArtBuchungsart;
+import de.jost_net.JVerein.keys.Filter;
 import de.jost_net.JVerein.keys.VorlageTyp;
 import de.jost_net.JVerein.rmi.Buchung;
 import de.jost_net.JVerein.rmi.Buchungsart;
@@ -102,20 +105,20 @@ public class BuchungAuswertungEinzelExportPDF extends BuchungAuswertungExportPDF
   }
 
   @Override
-  public String getTitle(FilterControl object)
+  public String getTitle(FilterControl control)
   {
-    return VorlageUtil.getName(VorlageTyp.EINZELBUCHUNGEN_TITEL, object);
+    return VorlageUtil.getName(VorlageTyp.EINZELBUCHUNGEN_TITEL, control);
   }
 
   @Override
-  public String getSubtitle(FilterControl object)
+  public String getSubtitle(FilterControl control)
   {
-    return VorlageUtil.getName(VorlageTyp.EINZELBUCHUNGEN_SUBTITEL, object);
+    return VorlageUtil.getName(VorlageTyp.EINZELBUCHUNGEN_SUBTITEL, control);
   }
 
   @Override
-  public void doExport(Object[] objects, FilterControl control, File file,
-      ExportLayoutParam params, ProgressMonitor monitor)
+  public void doExport(Object[] objects, Map<Filter, String> filterMap,
+      File file, ExportLayoutParam params, ProgressMonitor monitor)
       throws RemoteException, ApplicationException, FileNotFoundException,
       DocumentException, IOException
   {
@@ -179,22 +182,17 @@ public class BuchungAuswertungEinzelExportPDF extends BuchungAuswertungExportPDF
       }
       nichtLeer = createTableContent(reporter, bua, null, liste) || nichtLeer;
     }
-    // Buchungen ohne Buchungsarten, wenn explizite Buchungsart angegeben ist,
-    // dann nur wenn auch ohne Buchungsart ausgewählt ist (ID == null)
-    // TODO Ohne Buchungsart
-    // if (query.getBuchungsart() == null || (query.getBuchungsart() != null
-    // && query.getBuchungsart().getID() == null))
-    // {
-    // List<Buchung> liste = getBuchungenOhneBuchungsart(query.get());
-    // if (liste.size() > 0)
-    // {
-    // anzahlBuchungsarten += 1;
-    // }
-    // Buchungsart bua = (Buchungsart) Einstellungen.getDBService()
-    // .createObject(Buchungsart.class, null);
-    // bua.setBezeichnung("Ohne Buchungsart");
-    // nichtLeer = createTableContent(reporter, bua, null, liste) || nichtLeer;
-    // }
+
+    List<Buchung> liste = getBuchungenOhneBuchungsart(objects);
+    if (liste.size() > 0)
+    {
+      anzahlBuchungsarten += 1;
+
+      Buchungsart bua = (Buchungsart) Einstellungen.getDBService()
+          .createObject(Buchungsart.class, null);
+      bua.setBezeichnung("Ohne Buchungsart");
+      nichtLeer = createTableContent(reporter, bua, null, liste) || nichtLeer;
+    }
 
     if (anzahlBuchungsarten > 1)
     {
@@ -240,7 +238,7 @@ public class BuchungAuswertungEinzelExportPDF extends BuchungAuswertungExportPDF
     }
     if (params.getFilterParameter())
     {
-      reporter.addParams(control.getFilterText(false), params);
+      reporter.addParams(filterMap, params);
     }
     reporter.close();
     fos.close();

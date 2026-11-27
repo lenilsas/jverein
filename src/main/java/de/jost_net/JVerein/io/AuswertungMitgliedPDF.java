@@ -29,14 +29,10 @@ import com.itextpdf.text.Paragraph;
 import de.jost_net.JVerein.Einstellungen;
 import de.jost_net.JVerein.Einstellungen.Property;
 import de.jost_net.JVerein.Queries.MitgliedQuery.MitgliedAuswahl;
-import de.jost_net.JVerein.gui.control.FilterControl;
 import de.jost_net.JVerein.gui.dialogs.AbstractPartExportDialog;
-import de.jost_net.JVerein.gui.view.MitgliedListeView;
-import de.jost_net.JVerein.gui.view.NichtMitgliedListeView;
 import de.jost_net.JVerein.io.Adressbuch.Adressaufbereitung;
 import de.jost_net.JVerein.keys.Filter;
 import de.jost_net.JVerein.rmi.Mitglied;
-import de.jost_net.JVerein.rmi.Mitgliedstyp;
 import de.jost_net.JVerein.server.Tools.EigenschaftenTool;
 import de.jost_net.JVerein.util.JVDateFormatTTMMJJJJ;
 import de.willuhn.jameica.gui.GUI;
@@ -47,22 +43,15 @@ import de.willuhn.util.ProgressMonitor;
 public class AuswertungMitgliedPDF extends AuswertungMitgliedAbstractPDF
 {
 
-  @SuppressWarnings("unchecked")
   @Override
-  public void doExport(Object[] objects, FilterControl control, File file,
-      ExportLayoutParam params, ProgressMonitor monitor)
+  public void doExport(Object[] objects, Map<Filter, String> filterMap,
+      File file, ExportLayoutParam params, ProgressMonitor monitor)
       throws RemoteException, ApplicationException, FileNotFoundException,
       DocumentException, IOException
   {
     try
     {
-      /*
-       * objects[0] ist ArrayList<Mitglied>, objects[1] ist der Filtertext,
-       * objects[2] ist Mitgliedstyp, objects[3] ist der Filter
-       */
-      ArrayList<Mitglied> list = (ArrayList<Mitglied>) objects[0];
-      Map<Filter, String> filterparams = (Map<Filter, String>) objects[1];
-      Mitgliedstyp mitgliedstyp = (Mitgliedstyp) objects[2];
+      String mitgliedstyp = filterMap.get(Filter.MITGLIEDSTYP);
 
       FileOutputStream fos = new FileOutputStream(file);
       Reporter reporter = new Reporter(fos, params);
@@ -91,112 +80,114 @@ public class AuswertungMitgliedPDF extends AuswertungMitgliedAbstractPDF
           params.getFontHeader());
       reporter.createHeader(100, Element.ALIGN_CENTER);
 
-      for (int i = 0; i < list.size(); i++)
+      for (Object o : objects)
       {
-        Mitglied m = list.get(i);
-        reporter.addColumn(Adressaufbereitung.getNameVorname(m),
-            Element.ALIGN_LEFT, params.getFontNormal());
-        String anschriftkommunikation = Adressaufbereitung.getAnschrift(m);
-        if (m.getTelefonprivat() != null && m.getTelefonprivat().length() > 0)
+        if (o instanceof Mitglied m)
         {
-          anschriftkommunikation += "\n" + "Tel. priv: " + m.getTelefonprivat();
-        }
-        if (m.getTelefondienstlich() != null
-            && m.getTelefondienstlich().length() > 0)
-        {
-          anschriftkommunikation += "\n" + "Tel. dienstl: "
-              + m.getTelefondienstlich();
-        }
-        if (m.getHandy() != null && m.getHandy().length() > 0)
-        {
-          anschriftkommunikation += "\n" + "Handy: " + m.getHandy();
-        }
-        if (m.getEmail() != null && m.getEmail().length() > 0)
-        {
-          anschriftkommunikation += "\n" + "EMail: " + m.getEmail();
-        }
-        reporter.addColumn(anschriftkommunikation, Element.ALIGN_LEFT,
-            params.getFontNormal());
-        reporter.addColumn(m.getGeburtsdatum(), Element.ALIGN_LEFT,
-            params.getFontNormal());
-
-        Date d = m.getEintritt();
-        if (d.equals(Einstellungen.NODATE))
-        {
-          d = null;
-        }
-        String zelle = "";
-        if (d != null)
-        {
-          zelle = new JVDateFormatTTMMJJJJ().format(d);
-        }
-
-        if (m.getAustritt() != null)
-        {
-          zelle += "\n" + new JVDateFormatTTMMJJJJ().format(m.getAustritt());
-        }
-        if (m.getKuendigung() != null)
-        {
-          zelle += "\n" + new JVDateFormatTTMMJJJJ().format(m.getKuendigung());
-        }
-        if (m.getSterbetag() != null)
-        {
-          zelle += "\n" + new JVDateFormatTTMMJJJJ().format(m.getSterbetag());
-        }
-        if (mitgliedauswahl == MitgliedAuswahl.MITGLIEDER)
-        {
-          reporter.addColumn(zelle, Element.ALIGN_LEFT, params.getFontNormal());
-        }
-        StringBuilder beitragsgruppebemerkung = new StringBuilder();
-        if (m.getBeitragsgruppe() != null)
-        {
-          beitragsgruppebemerkung
-              .append(m.getBeitragsgruppe().getBezeichnung());
-        }
-        StringBuilder eigenschaften = new StringBuilder();
-        ArrayList<String> eig = new EigenschaftenTool()
-            .getEigenschaften(m.getID());
-        for (int i2 = 0; i2 < eig.size(); i2 = i2 + 2)
-        {
-          if (i2 == 0)
+          reporter.addColumn(Adressaufbereitung.getNameVorname(m),
+              Element.ALIGN_LEFT, params.getFontNormal());
+          String anschriftkommunikation = Adressaufbereitung.getAnschrift(m);
+          if (m.getTelefonprivat() != null && m.getTelefonprivat().length() > 0)
           {
-            beitragsgruppebemerkung.append("\n");
+            anschriftkommunikation += "\n" + "Tel. priv: "
+                + m.getTelefonprivat();
           }
-          eigenschaften.append(eig.get(i2));
-          eigenschaften.append(": ");
-          eigenschaften.append(eig.get(i2 + 1));
-          eigenschaften.append("\n");
-        }
+          if (m.getTelefondienstlich() != null
+              && m.getTelefondienstlich().length() > 0)
+          {
+            anschriftkommunikation += "\n" + "Tel. dienstl: "
+                + m.getTelefondienstlich();
+          }
+          if (m.getHandy() != null && m.getHandy().length() > 0)
+          {
+            anschriftkommunikation += "\n" + "Handy: " + m.getHandy();
+          }
+          if (m.getEmail() != null && m.getEmail().length() > 0)
+          {
+            anschriftkommunikation += "\n" + "EMail: " + m.getEmail();
+          }
+          reporter.addColumn(anschriftkommunikation, Element.ALIGN_LEFT,
+              params.getFontNormal());
+          reporter.addColumn(m.getGeburtsdatum(), Element.ALIGN_LEFT,
+              params.getFontNormal());
 
-        zelle = "";
-        if ((Boolean) Einstellungen
-            .getEinstellung(Property.EXTERNEMITGLIEDSNUMMER))
-        {
-          zelle += (m.getExterneMitgliedsnummer() != null
-              ? m.getExterneMitgliedsnummer()
-              : "");
-        }
+          Date d = m.getEintritt();
+          if (d.equals(Einstellungen.NODATE))
+          {
+            d = null;
+          }
+          String zelle = "";
+          if (d != null)
+          {
+            zelle = new JVDateFormatTTMMJJJJ().format(d);
+          }
 
-        reporter.addColumn(beitragsgruppebemerkung.toString()
-            + eigenschaften.toString() + zelle, Element.ALIGN_LEFT,
-            params.getFontNormal());
+          if (m.getAustritt() != null)
+          {
+            zelle += "\n" + new JVDateFormatTTMMJJJJ().format(m.getAustritt());
+          }
+          if (m.getKuendigung() != null)
+          {
+            zelle += "\n"
+                + new JVDateFormatTTMMJJJJ().format(m.getKuendigung());
+          }
+          if (m.getSterbetag() != null)
+          {
+            zelle += "\n" + new JVDateFormatTTMMJJJJ().format(m.getSterbetag());
+          }
+          if (mitgliedauswahl == MitgliedAuswahl.MITGLIEDER)
+          {
+            reporter.addColumn(zelle, Element.ALIGN_LEFT,
+                params.getFontNormal());
+          }
+          StringBuilder beitragsgruppebemerkung = new StringBuilder();
+          if (m.getBeitragsgruppe() != null)
+          {
+            beitragsgruppebemerkung
+                .append(m.getBeitragsgruppe().getBezeichnung());
+          }
+          StringBuilder eigenschaften = new StringBuilder();
+          ArrayList<String> eig = new EigenschaftenTool()
+              .getEigenschaften(m.getID());
+          for (int i2 = 0; i2 < eig.size(); i2 = i2 + 2)
+          {
+            if (i2 == 0)
+            {
+              beitragsgruppebemerkung.append("\n");
+            }
+            eigenschaften.append(eig.get(i2));
+            eigenschaften.append(": ");
+            eigenschaften.append(eig.get(i2 + 1));
+            eigenschaften.append("\n");
+          }
+
+          zelle = "";
+          if ((Boolean) Einstellungen
+              .getEinstellung(Property.EXTERNEMITGLIEDSNUMMER))
+          {
+            zelle += (m.getExterneMitgliedsnummer() != null
+                ? m.getExterneMitgliedsnummer()
+                : "");
+          }
+
+          reporter.addColumn(beitragsgruppebemerkung.toString()
+              + eigenschaften.toString() + zelle, Element.ALIGN_LEFT,
+              params.getFontNormal());
+        }
       }
       reporter.closeTable();
 
-      reporter.add(new Paragraph(
-          String.format("Anzahl %s: %d",
-              mitgliedstyp == null ? "Nicht-Mitglieder"
-                  : mitgliedstyp.getBezeichnungPlural(),
-              list.size()),
-          params.getFontNormal()));
+      reporter.add(new Paragraph(String.format("Anzahl %s: %d",
+          mitgliedstyp == null ? "Nicht-Mitglieder" : mitgliedstyp,
+          objects.length), params.getFontNormal()));
       if (params.getFilterParameter())
       {
-        reporter.addParams(filterparams, params);
+        reporter.addParams(filterMap, params);
       }
       reporter.closeTable();
       reporter.close();
       GUI.getStatusBar().setSuccessText(
-          String.format("Auswertung fertig. %d Sätze.", list.size()));
+          String.format("Auswertung fertig. %d Sätze.", objects.length));
     }
     catch (Exception e)
     {
@@ -214,8 +205,7 @@ public class AuswertungMitgliedPDF extends AuswertungMitgliedAbstractPDF
   @Override
   public IOFormat[] getIOFormats(Class<?> objectType)
   {
-    if (objectType != MitgliedListeView.class
-        && objectType != NichtMitgliedListeView.class)
+    if (!Mitglied.class.isAssignableFrom(objectType))
     {
       return null;
     }

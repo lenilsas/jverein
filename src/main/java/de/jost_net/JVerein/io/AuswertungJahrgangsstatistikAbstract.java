@@ -31,7 +31,6 @@ import de.jost_net.JVerein.Einstellungen;
 import de.jost_net.JVerein.gui.control.FilterControl;
 import de.jost_net.JVerein.gui.input.GeschlechtInput;
 import de.jost_net.JVerein.keys.Filter;
-import de.jost_net.JVerein.keys.Jubeljahr;
 import de.jost_net.JVerein.keys.VorlageTyp;
 import de.jost_net.JVerein.rmi.Mitglied;
 import de.jost_net.JVerein.server.MitgliedUtils;
@@ -53,20 +52,18 @@ public abstract class AuswertungJahrgangsstatistikAbstract implements Exporter
 
   protected ExportLayoutParam params;
 
-  @SuppressWarnings("unchecked")
   @Override
-  public void doExport(final Object[] objects, FilterControl control, File file,
-      ExportLayoutParam params, ProgressMonitor monitor)
+  public void doExport(final Object[] objects, Map<Filter, String> filterMap,
+      File file, ExportLayoutParam params, ProgressMonitor monitor)
       throws ApplicationException, DocumentException, IOException
   {
-    /*
-     * objects[0] sind die Ausgabeparameter Filter, objects[1] ist der
-     * Filtertext, objects[2] ist Mitgliedstyp, objects[3] ist der Filter
-     */
     this.file = file;
     this.params = params;
-    Map<Filter, Object> filter = (Map<Filter, Object>) objects[0];
-    Integer jahr = ((Jubeljahr) filter.get(Filter.JUBELJAHR)).getKey();
+    if (filterMap.get(Filter.JUBELJAHR) == null)
+    {
+      throw new ApplicationException("Auswertungsjahr ist leer");
+    }
+    Integer jahr = Integer.parseInt(filterMap.get(Filter.JUBELJAHR));
     statistik = new TreeMap<>();
     try
     {
@@ -176,17 +173,17 @@ public abstract class AuswertungJahrgangsstatistikAbstract implements Exporter
   protected abstract void close() throws IOException, DocumentException;
 
   @Override
-  public String getTitle(FilterControl object)
+  public String getTitle(FilterControl control)
   {
     return VorlageUtil.getName(VorlageTyp.AUSWERTUNG_JAHRGANGS_STATISTIK_TITEL,
-        object);
+        control);
   }
 
   @Override
-  public String getSubtitle(FilterControl object)
+  public String getSubtitle(FilterControl control)
   {
     return VorlageUtil
-        .getName(VorlageTyp.AUSWERTUNG_JAHRGANGS_STATISTIK_SUBTITEL, object);
+        .getName(VorlageTyp.AUSWERTUNG_JAHRGANGS_STATISTIK_SUBTITEL, control);
   }
 
   @Override

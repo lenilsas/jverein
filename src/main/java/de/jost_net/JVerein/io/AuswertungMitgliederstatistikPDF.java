@@ -22,6 +22,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Map;
@@ -36,7 +37,6 @@ import de.jost_net.JVerein.Einstellungen.Property;
 import de.jost_net.JVerein.gui.control.FilterControl;
 import de.jost_net.JVerein.gui.dialogs.AbstractPartExportDialog;
 import de.jost_net.JVerein.gui.input.GeschlechtInput;
-import de.jost_net.JVerein.gui.view.MitgliedListeView;
 import de.jost_net.JVerein.keys.Filter;
 import de.jost_net.JVerein.keys.VorlageTyp;
 import de.jost_net.JVerein.rmi.Beitragsgruppe;
@@ -55,25 +55,21 @@ public class AuswertungMitgliederstatistikPDF implements Exporter
 {
   private ExportLayoutParam params;
 
-  @SuppressWarnings("unchecked")
   @Override
-  public void doExport(Object[] objects, FilterControl control, File file,
-      ExportLayoutParam params, ProgressMonitor monitor)
+  public void doExport(Object[] objects, Map<Filter, String> filterMap,
+      File file, ExportLayoutParam params, ProgressMonitor monitor)
       throws RemoteException, ApplicationException, FileNotFoundException,
       DocumentException, IOException
   {
     try
     {
-      /*
-       * objects[0] sind die Ausgabeparameter Filter, objects[1] ist der
-       * Filtertext, objects[2] ist Mitgliedstyp, objects[3] ist der Filter
-       */
-      Map<Filter, Object> filter = (Map<Filter, Object>) objects[0];
-      Date stichtag = (Date) filter.get(Filter.STICHTAG);
-      if (stichtag == null)
+
+      if (filterMap.get(Filter.STICHTAG) == null)
       {
         throw new ApplicationException("Stichtag ist leer");
       }
+      Date stichtag = new SimpleDateFormat("yyyyMMdd")
+          .parse(filterMap.get(Filter.STICHTAG));
       this.params = params;
 
       Font font = new Font(params.getFontHeader());
@@ -429,7 +425,7 @@ public class AuswertungMitgliederstatistikPDF implements Exporter
   @Override
   public IOFormat[] getIOFormats(Class<?> objectType)
   {
-    if (objectType != MitgliedListeView.class)
+    if (!Mitglied.class.isAssignableFrom(objectType))
     {
       return null;
     }
@@ -462,17 +458,17 @@ public class AuswertungMitgliederstatistikPDF implements Exporter
   }
 
   @Override
-  public String getTitle(FilterControl object)
+  public String getTitle(FilterControl control)
   {
     return VorlageUtil.getName(VorlageTyp.AUSWERTUNG_MITGLIEDER_STATISTIK_TITEL,
-        object);
+        control);
   }
 
   @Override
-  public String getSubtitle(FilterControl object)
+  public String getSubtitle(FilterControl control)
   {
     return VorlageUtil
-        .getName(VorlageTyp.AUSWERTUNG_MITGLIEDER_STATISTIK_SUBTITEL, object);
+        .getName(VorlageTyp.AUSWERTUNG_MITGLIEDER_STATISTIK_SUBTITEL, control);
   }
 
   @Override

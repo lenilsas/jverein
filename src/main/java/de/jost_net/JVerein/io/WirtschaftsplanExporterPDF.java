@@ -39,6 +39,7 @@ import de.jost_net.JVerein.gui.control.WirtschaftsplanNode;
 import de.jost_net.JVerein.gui.dialogs.AbstractPartExportDialog;
 import de.jost_net.JVerein.gui.formatter.BuchungsklasseFormatter;
 import de.jost_net.JVerein.keys.BuchungsartSort;
+import de.jost_net.JVerein.keys.Filter;
 import de.jost_net.JVerein.keys.VorlageTyp;
 import de.jost_net.JVerein.rmi.Buchungsklasse;
 import de.jost_net.JVerein.rmi.Wirtschaftsplan;
@@ -102,9 +103,10 @@ public class WirtschaftsplanExporterPDF implements Exporter
   }
 
   @Override
-  public void doExport(Object[] objects, FilterControl control, File file,
-      ExportLayoutParam params, ProgressMonitor monitor) throws RemoteException, ApplicationException,
-      FileNotFoundException, DocumentException, IOException
+  public void doExport(Object[] objects, Map<Filter, String> filterMap,
+      File file, ExportLayoutParam params, ProgressMonitor monitor)
+      throws RemoteException, ApplicationException, FileNotFoundException,
+      DocumentException, IOException
   {
     Wirtschaftsplan[] wirtschaftsplaene = Arrays.stream(objects)
         .filter(Wirtschaftsplan.class::isInstance)
@@ -488,23 +490,23 @@ public class WirtschaftsplanExporterPDF implements Exporter
   }
 
   @Override
-  public String getTitle(FilterControl object)
+  public String getTitle(FilterControl control)
   {
     return VorlageUtil
-        .getName(object == null ? VorlageTyp.WIRTSCHAFTSPLAN_MEHRERE_TITEL
-            : VorlageTyp.WIRTSCHAFTSPLAN_TITEL, object);
+        .getName(control == null ? VorlageTyp.WIRTSCHAFTSPLAN_MEHRERE_TITEL
+            : VorlageTyp.WIRTSCHAFTSPLAN_TITEL, control);
   }
 
   @Override
-  public String getSubtitle(FilterControl object)
+  public String getSubtitle(FilterControl control)
   {
     return VorlageUtil
-        .getName(object == null ? VorlageTyp.WIRTSCHAFTSPLAN_MEHRERE_SUBTITEL
-            : VorlageTyp.WIRTSCHAFTSPLAN_SUBTITEL, object);
+        .getName(control == null ? VorlageTyp.WIRTSCHAFTSPLAN_MEHRERE_SUBTITEL
+            : VorlageTyp.WIRTSCHAFTSPLAN_SUBTITEL, control);
   }
 
   @Override
-  public boolean hasColortable2(FilterControl object)
+  public boolean hasColortable2()
   {
     return true;
   }

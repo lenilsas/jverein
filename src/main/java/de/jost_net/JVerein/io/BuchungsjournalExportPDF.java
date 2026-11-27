@@ -23,6 +23,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
+import java.util.Arrays;
+import java.util.Map;
+
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 
@@ -34,6 +37,7 @@ import de.jost_net.JVerein.gui.dialogs.AbstractPartExportDialog;
 import de.jost_net.JVerein.gui.dialogs.BuchungsjournalSortDialog;
 import de.jost_net.JVerein.gui.formatter.BuchungsartFormatter;
 import de.jost_net.JVerein.keys.ArtBuchungsart;
+import de.jost_net.JVerein.keys.Filter;
 import de.jost_net.JVerein.keys.VorlageTyp;
 import de.jost_net.JVerein.rmi.Buchung;
 import de.jost_net.JVerein.util.JVDateFormatTTMMJJJJ;
@@ -101,20 +105,20 @@ public class BuchungsjournalExportPDF implements Exporter
   }
 
   @Override
-  public String getTitle(FilterControl object)
+  public String getTitle(FilterControl control)
   {
-    return VorlageUtil.getName(VorlageTyp.BUCHUNGSJOURNAL_TITEL, object);
+    return VorlageUtil.getName(VorlageTyp.BUCHUNGSJOURNAL_TITEL, control);
   }
 
   @Override
-  public String getSubtitle(FilterControl object)
+  public String getSubtitle(FilterControl control)
   {
-    return VorlageUtil.getName(VorlageTyp.BUCHUNGSJOURNAL_SUBTITEL, object);
+    return VorlageUtil.getName(VorlageTyp.BUCHUNGSJOURNAL_SUBTITEL, control);
   }
 
   @Override
-  public void doExport(Object[] objects, FilterControl control, File file,
-      ExportLayoutParam params, ProgressMonitor monitor)
+  public void doExport(Object[] objects, Map<Filter, String> filterMap,
+      File file, ExportLayoutParam params, ProgressMonitor monitor)
       throws RemoteException, ApplicationException, FileNotFoundException,
       DocumentException, IOException
   {
@@ -136,8 +140,8 @@ public class BuchungsjournalExportPDF implements Exporter
       throw new OperationCanceledException("Ausgabe abgebrochen");
     }
     if (sort != null)
-    {// TODO Sortierung
-     // query.setOrdername(sort);
+    {
+      sortBuchungen(objects, sort);
     }
 
     FileOutputStream fos = new FileOutputStream(file);
@@ -285,7 +289,7 @@ public class BuchungsjournalExportPDF implements Exporter
     reporter.closeTable();
     if (params.getFilterParameter())
     {
-      reporter.addParams(control.getFilterText(false), params);
+      reporter.addParams(filterMap, params);
     }
     reporter.close();
     fos.close();
@@ -317,6 +321,138 @@ public class BuchungsjournalExportPDF implements Exporter
           params.getColorHeader(), params.getFontHeader());
     }
     reporter.createHeader();
+  }
+
+  private void sortBuchungen(Object[] objects, String sort)
+      throws RemoteException
+  {
+    try
+    {
+      Arrays.sort(objects, (o1, o2) -> {
+        try
+        {
+          Buchung b1 = (Buchung) o1;
+          Buchung b2 = (Buchung) o2;
+
+          int result;
+
+          switch (sort)
+          {
+            case BuchungsjournalSortDialog.ID:
+              return compareString(b1.getID(), b2.getID());
+
+            case BuchungsjournalSortDialog.DATUM:
+              return b1.getDatum().compareTo(b2.getDatum());
+
+            case BuchungsjournalSortDialog.DATUM_NAME:
+              result = b1.getDatum().compareTo(b2.getDatum());
+              return result != 0 ? result
+                  : compareString(b1.getName(), b2.getName());
+
+            case BuchungsjournalSortDialog.DATUM_ID:
+              result = b1.getDatum().compareTo(b2.getDatum());
+              return result != 0 ? result
+                  : compareString(b1.getID(), b2.getID());
+
+            case BuchungsjournalSortDialog.DATUM_ID_NAME:
+              result = b1.getDatum().compareTo(b2.getDatum());
+              if (result != 0)
+                return result;
+              result = compareString(b1.getID(), b2.getID());
+              return result != 0 ? result
+                  : compareString(b1.getName(), b2.getName());
+
+            case BuchungsjournalSortDialog.DATUM_AUSZUGSNUMMER:
+              result = b1.getDatum().compareTo(b2.getDatum());
+              return result != 0 ? result
+                  : compareInteger(b1.getAuszugsnummer(),
+                      b2.getAuszugsnummer());
+
+            case BuchungsjournalSortDialog.DATUM_AUSZUGSNUMMER_NAME:
+              result = b1.getDatum().compareTo(b2.getDatum());
+              if (result != 0)
+                return result;
+              result = compareInteger(b1.getAuszugsnummer(),
+                  b2.getAuszugsnummer());
+              return result != 0 ? result
+                  : compareString(b1.getName(), b2.getName());
+
+            case BuchungsjournalSortDialog.DATUM_BLATTNUMMER:
+              result = b1.getDatum().compareTo(b2.getDatum());
+              return result != 0 ? result
+                  : compareInteger(b1.getBlattnummer(), b2.getBlattnummer());
+
+            case BuchungsjournalSortDialog.DATUM_BLATTNUMMER_NAME:
+              result = b1.getDatum().compareTo(b2.getDatum());
+              if (result != 0)
+                return result;
+              result = compareInteger(b1.getBlattnummer(), b2.getBlattnummer());
+              return result != 0 ? result
+                  : compareString(b1.getName(), b2.getName());
+
+            case BuchungsjournalSortDialog.DATUM_AUSGZUGSNUMMER_ID:
+              result = b1.getDatum().compareTo(b2.getDatum());
+              if (result != 0)
+                return result;
+              result = compareInteger(b1.getAuszugsnummer(),
+                  b2.getAuszugsnummer());
+              return result != 0 ? result
+                  : compareString(b1.getID(), b2.getID());
+
+            case BuchungsjournalSortDialog.DATUM_BLATTNUMMER_ID:
+              result = b1.getDatum().compareTo(b2.getDatum());
+              if (result != 0)
+                return result;
+              result = compareInteger(b1.getBlattnummer(), b2.getBlattnummer());
+              return result != 0 ? result
+                  : compareString(b1.getID(), b2.getID());
+
+            case BuchungsjournalSortDialog.DATUM_AUSGZUGSNUMMER_BLATTNUMMER_ID:
+              result = b1.getDatum().compareTo(b2.getDatum());
+              if (result != 0)
+                return result;
+              result = compareInteger(b1.getAuszugsnummer(),
+                  b2.getAuszugsnummer());
+              if (result != 0)
+                return result;
+              result = compareInteger(b1.getBlattnummer(), b2.getBlattnummer());
+              return result != 0 ? result
+                  : compareString(b1.getID(), b2.getID());
+
+            default:
+              return b1.getDatum().compareTo(b2.getDatum());
+          }
+        }
+        catch (RemoteException e)
+        {
+          throw new RuntimeException(e);
+        }
+      });
+    }
+    catch (RuntimeException e)
+    {
+      if (e.getCause() instanceof RemoteException re)
+        throw re;
+      throw e;
+    }
+  }
+
+  private int compareString(String s1, String s2)
+  {
+    if (s1 == null)
+      return s2 == null ? 0 : -1;
+    if (s2 == null)
+      return 1;
+    return s1.compareToIgnoreCase(s2);
+  }
+
+  private int compareInteger(Integer i1, Integer i2)
+  {
+    if (i1 == null)
+      return i2 == null ? 0 : -1;
+    if (i2 == null)
+      return 1;
+    return i1.compareTo(i2);
   }
 
   @Override

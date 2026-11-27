@@ -129,17 +129,20 @@ public abstract class BuchungAuswertungExportPDF implements Exporter
   }
 
   // Buchungen ohne Buchungsart
-  protected List<Buchung> getBuchungenOhneBuchungsart(List<Buchung> buchungen)
+  protected List<Buchung> getBuchungenOhneBuchungsart(Object[] buchungen)
       throws RemoteException
   {
     List<Buchung> liste = new ArrayList<>();
-    for (Buchung b : buchungen)
+    for (Object o : buchungen)
     {
-      if (b.getBuchungsart() != null)
+      if (o instanceof Buchung b)
       {
-        continue;
+        if (b.getBuchungsart() != null)
+        {
+          continue;
+        }
+        liste.add(b);
       }
-      liste.add(b);
     }
     return liste;
   }

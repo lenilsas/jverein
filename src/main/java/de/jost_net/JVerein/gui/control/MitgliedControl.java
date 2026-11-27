@@ -91,7 +91,7 @@ public class MitgliedControl extends FilterControl
   {
     return new ExportButton(mitgliedAuswahl == MitgliedAuswahl.MITGLIEDER
         ? DokumentationUtil.MITGLIEDSUCHE
-        : DokumentationUtil.ADRESSEN, control);
+        : DokumentationUtil.ADRESSEN, this);
   }
 
   @Override

@@ -19,7 +19,6 @@ package de.jost_net.JVerein.Queries;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -48,65 +47,13 @@ public class BuchungQuery
 
   private boolean geldkonto;
 
-  public String ordername = null;
-
-  private HashMap<String, String> sortValues = new HashMap<String, String>();
-
   private Map<Filter, Object> filter;
-
-  private void SortHashMap()
-  {
-    sortValues.put("ORDER_ID", "order by id");
-    sortValues.put("ORDER_DATUM", "order by datum");
-    sortValues.put("ORDER_DATUM_NAME", "order by datum, name");
-    sortValues.put("ORDER_DATUM_ID", "order by datum, id");
-    sortValues.put("ORDER_DATUM_ID_NAME", "order by datum, id, name");
-    sortValues.put("ORDER_DATUM_AUSZUGSNUMMER",
-        "order by datum, auszugsnummer");
-    sortValues.put("ORDER_DATUM_AUSZUGSNUMMER_NAME",
-        "order by datum, auszugsnummer, name");
-    sortValues.put("ORDER_DATUM_BLATTNUMMER", "order by datum, blattnummer");
-    sortValues.put("ORDER_DATUM_BLATTNUMMER_NAME",
-        "order by datum, blattnummer, name");
-    sortValues.put("ORDER_DATUM_AUSZUGSNUMMER_ID",
-        "order by datum, auszugsnummer, id");
-    sortValues.put("ORDER_DATUM_BLATTNUMMER_ID",
-        "order by datum, blattnummer, id");
-    sortValues.put("ORDER_DATUM_AUSZUGSNUMMER_BLATTNUMMER_ID",
-        "order by datum, auszugsnummer, blattnummer, id");
-    sortValues.put("DEFAULT", "order by datum");
-  }
 
   public BuchungQuery(Map<Filter, Object> filter, boolean geldkonto)
       throws ApplicationException
   {
     this.filter = filter;
     this.geldkonto = geldkonto;
-  }
-
-  public String getOrder(String value)
-  {
-    SortHashMap();
-    String newvalue = null;
-    if (value == null)
-    {
-      return sortValues.get("DEFAULT");
-    }
-    else
-    {
-      newvalue = value.replaceAll(", ", "_");
-      newvalue = newvalue.toUpperCase();
-      newvalue = "ORDER_" + newvalue;
-      return sortValues.get(newvalue);
-    }
-  }
-
-  public void setOrdername(String value)
-  {
-    if (value != null)
-    {
-      ordername = value;
-    }
   }
 
   @SuppressWarnings("unchecked")
@@ -297,13 +244,6 @@ public class BuchungQuery
               "Filter nicht implementiert: " + entry.getKey().getAnzeigeText());
       }
     }
-
-    // 20220823: sbuer: Neue Sortierfelder
-    SortHashMap();
-    String orderString = getOrder(ordername);
-    // System.out.println("ordervalue : " + ordername + " ,orderString : " +
-    // orderString);
-    it.setOrder(orderString);
 
     this.ergebnis = it != null ? PseudoIterator.asList(it) : null;
     return ergebnis;

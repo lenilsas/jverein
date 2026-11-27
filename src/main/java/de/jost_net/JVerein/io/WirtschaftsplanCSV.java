@@ -38,6 +38,7 @@ import de.jost_net.JVerein.gui.control.FilterControl;
 import de.jost_net.JVerein.gui.control.WirtschaftsplanNode;
 import de.jost_net.JVerein.gui.dialogs.AbstractPartExportDialog;
 import de.jost_net.JVerein.keys.BuchungsartSort;
+import de.jost_net.JVerein.keys.Filter;
 import de.jost_net.JVerein.keys.VorlageTyp;
 import de.jost_net.JVerein.rmi.Buchungsklasse;
 import de.jost_net.JVerein.rmi.Wirtschaftsplan;
@@ -55,8 +56,9 @@ public class WirtschaftsplanCSV implements Exporter
 
   @SuppressWarnings("unchecked")
   @Override
-  public void doExport(Object[] objects, FilterControl control, File file,
-      ExportLayoutParam params, ProgressMonitor monitor) throws ApplicationException, RemoteException
+  public void doExport(Object[] objects, Map<Filter, String> filterMap,
+      File file, ExportLayoutParam params, ProgressMonitor monitor)
+      throws ApplicationException, RemoteException
   {
     Wirtschaftsplan[] wirtschaftsplaene = Arrays.stream(objects)
         .filter(Wirtschaftsplan.class::isInstance)

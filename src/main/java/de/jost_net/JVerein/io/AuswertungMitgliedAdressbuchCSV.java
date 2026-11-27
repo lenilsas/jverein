@@ -24,14 +24,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
+import java.util.Map;
 
 import com.itextpdf.text.DocumentException;
 
-import de.jost_net.JVerein.gui.control.FilterControl;
 import de.jost_net.JVerein.gui.dialogs.AbstractPartExportDialog;
-import de.jost_net.JVerein.gui.view.MitgliedListeView;
-import de.jost_net.JVerein.gui.view.NichtMitgliedListeView;
+import de.jost_net.JVerein.keys.Filter;
 import de.jost_net.JVerein.rmi.Mitglied;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.util.ApplicationException;
@@ -45,19 +43,13 @@ public class AuswertungMitgliedAdressbuchCSV
   private String separator = ";";
 
   @Override
-  public void doExport(Object[] objects, FilterControl control, File file,
-      ExportLayoutParam params, ProgressMonitor monitor)
+  public void doExport(Object[] objects, Map<Filter, String> filterMap,
+      File file, ExportLayoutParam params, ProgressMonitor monitor)
       throws RemoteException, ApplicationException, FileNotFoundException,
       DocumentException, IOException
   {
     try
     {
-      /*
-       * objects[0] ist ArrayList<Mitglied>, objects[1] ist der Filtertext,
-       * objects[2] ist Mitgliedstyp
-       */
-      @SuppressWarnings("unchecked")
-      ArrayList<Mitglied> list = (ArrayList<Mitglied>) objects[0];
       out = new OutputStreamWriter(
           new BufferedOutputStream(new FileOutputStream(file)));
       out.write("\"Name\"" + separator + "\"Vorname\"" + separator
@@ -66,13 +58,16 @@ public class AuswertungMitgliedAdressbuchCSV
           + "\"Email\"" + separator + "\"TelefonPrivat\"" + separator
           + "\"TelefonMobil\"\n");
 
-      for (Mitglied m : list)
+      for (Object o : objects)
       {
-        out.write(getZeile(m));
+        if (o instanceof Mitglied m)
+        {
+          out.write(getZeile(m));
+        }
       }
       out.close();
       GUI.getStatusBar().setSuccessText(
-          String.format("Auswertung fertig. %d Sätze.", list.size()));
+          String.format("Auswertung fertig. %d Sätze.", objects.length));
     }
     catch (IOException e)
     {
@@ -108,8 +103,7 @@ public class AuswertungMitgliedAdressbuchCSV
   @Override
   public IOFormat[] getIOFormats(Class<?> objectType)
   {
-    if (objectType != MitgliedListeView.class
-        && objectType != NichtMitgliedListeView.class)
+    if (!Mitglied.class.isAssignableFrom(objectType))
     {
       return null;
     }

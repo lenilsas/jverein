@@ -20,12 +20,13 @@ import java.io.File;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Map;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.FileDialog;
 
-import de.jost_net.JVerein.gui.control.AuswertungControl;
 import de.jost_net.JVerein.gui.control.FilterControl;
 import de.jost_net.JVerein.gui.dialogs.AbstractPartExportDialog.ExportArt;
 import de.jost_net.JVerein.gui.parts.HelpButton;
@@ -34,6 +35,7 @@ import de.jost_net.JVerein.io.Exporter;
 import de.jost_net.JVerein.io.FileViewer;
 import de.jost_net.JVerein.io.IOFormat;
 import de.jost_net.JVerein.io.IORegistry;
+import de.jost_net.JVerein.keys.Filter;
 import de.willuhn.datasource.GenericObject;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.dialogs.AbstractDialog;
@@ -179,10 +181,8 @@ public class ExportDialog extends AbstractDialog<Object>
         // Für die Dateinamen und Titel Generierung muss der AusgabeControl
         // verwendet werden
         control = d.getData();
-        // Ausgabeparameter überschreiben die Mitgliederliste objects[0]!
-        // TODO Warum objects[0]???
-        objects[0] = ((AuswertungControl) control).getFilter();
       }
+      Map<Filter, String> filter = control.getFilterText(false);
 
       ExportLayoutParam params;
 
@@ -190,7 +190,7 @@ public class ExportDialog extends AbstractDialog<Object>
       {
         // Layout Parameter abfragen
         ExporterExportDialog d = new ExporterExportDialog(
-            exporter.hasColortable2(control), prefix, ExportArt.PDF,
+            exporter.hasColortable2(), prefix, ExportArt.PDF,
             exporter.getTitle(control), exporter.getSubtitle(control),
             exporter.getDateiname(control, objects),
             exporter.getExportDialogOptions());
@@ -259,7 +259,7 @@ public class ExportDialog extends AbstractDialog<Object>
         {
           try
           {
-            exporter.doExport(objects, control, file, params, monitor);
+            exporter.doExport(objects, filter, file, params, monitor);
 
             monitor.setPercentComplete(100);
             monitor.setStatus(ProgressMonitor.STATUS_DONE);

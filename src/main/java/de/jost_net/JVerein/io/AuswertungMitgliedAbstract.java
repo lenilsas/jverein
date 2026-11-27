@@ -23,34 +23,34 @@ public abstract class AuswertungMitgliedAbstract implements Exporter
 {
 
   @Override
-  public String getTitle(FilterControl object)
+  public String getTitle(FilterControl control)
   {
-    if (((MitgliedControl) object).getMitgliedAuswahl()
+    if (((MitgliedControl) control).getMitgliedAuswahl()
         .equals(MitgliedAuswahl.MITGLIEDER))
     {
-      return VorlageUtil.getName(VorlageTyp.AUSWERTUNG_MITGLIED_TITEL, object,
+      return VorlageUtil.getName(VorlageTyp.AUSWERTUNG_MITGLIED_TITEL, control,
           getExportName());
     }
     else
     {
       return VorlageUtil.getName(VorlageTyp.AUSWERTUNG_NICHT_MITGLIED_TITEL,
-          object, getExportName());
+          control, getExportName());
     }
   }
 
   @Override
-  public String getSubtitle(FilterControl object)
+  public String getSubtitle(FilterControl control)
   {
-    if (((MitgliedControl) object).getMitgliedAuswahl()
+    if (((MitgliedControl) control).getMitgliedAuswahl()
         .equals(MitgliedAuswahl.MITGLIEDER))
     {
       return VorlageUtil.getName(VorlageTyp.AUSWERTUNG_MITGLIED_SUBTITEL,
-          object, getExportName());
+          control, getExportName());
     }
     else
     {
       return VorlageUtil.getName(VorlageTyp.AUSWERTUNG_NICHT_MITGLIED_SUBTITEL,
-          object, getExportName());
+          control, getExportName());
     }
   }
 
