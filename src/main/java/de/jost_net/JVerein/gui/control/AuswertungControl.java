@@ -29,7 +29,7 @@ public class AuswertungControl extends FilterControl
 
   private Map<String, Object> filtermap;
 
-  private Map<Filter, Object> filter;
+  private Map<Filter, String> filter;
 
   public AuswertungControl(AbstractView view)
   {
@@ -38,13 +38,14 @@ public class AuswertungControl extends FilterControl
 
   public void generateFilter() throws RemoteException
   {
-    filtermap = new FilterMap().getMap((FilterControl) this, null);
-    filter = super.getFilter();
+    filtermap = new FilterMap().getMap(this, null);
+    filter = super.getFilterText(false);
   }
 
   @Override
-  public Map<Filter, Object> getFilter()
+  public Map<Filter, String> getFilterText(boolean b)
   {
+    // TODO!!!!
     return this.filter;
   }
 

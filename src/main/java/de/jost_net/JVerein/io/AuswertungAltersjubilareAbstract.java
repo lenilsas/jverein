@@ -122,7 +122,7 @@ public abstract class AuswertungAltersjubilareAbstract implements Exporter
   }
 
   @Override
-  public Filter[] getAusgabeParameter(FilterControl object)
+  public Filter[] getAusgabeParameter()
   {
     return new Filter[] { Filter.JUBELJAHR };
   }

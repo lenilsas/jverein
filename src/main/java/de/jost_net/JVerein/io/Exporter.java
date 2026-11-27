@@ -107,10 +107,9 @@ public interface Exporter extends IO
   /**
    * Übergabe von Ausgabeparameter für die Reportgenerierung
    * 
-   * @param object
    * @return
    */
-  default Filter[] getAusgabeParameter(FilterControl object)
+  default Filter[] getAusgabeParameter()
   {
     return null;
   }

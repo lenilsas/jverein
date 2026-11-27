@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.FileDialog;
 
+import de.jost_net.JVerein.gui.control.AuswertungControl;
 import de.jost_net.JVerein.gui.control.FilterControl;
 import de.jost_net.JVerein.gui.dialogs.AbstractPartExportDialog.ExportArt;
 import de.jost_net.JVerein.gui.parts.HelpButton;
@@ -166,14 +167,17 @@ public class ExportDialog extends AbstractDialog<Object>
 
     try
     {
+      final Map<Filter, String> filter;
+      Map<Filter, String> filterMap;
+
       // Die Ausgabe hat eigene Parameter und nutzt nicht die gefilterte
       // Mitgliederliste. Es wird ein eigener AusgabeControl erzeugt mit den
       // Ausgabeparametern als Filterliste
-      if (exporter.getAusgabeParameter(control) != null)
+      if (exporter.getAusgabeParameter() != null)
       {
         AuswertungExportDialog d = new AuswertungExportDialog(
             AuswertungExportDialog.POSITION_CENTER,
-            exporter.getAusgabeParameter(control));
+            exporter.getAusgabeParameter());
         if (d.open() == null)
         {
           throw new OperationCanceledException();
@@ -181,8 +185,13 @@ public class ExportDialog extends AbstractDialog<Object>
         // Für die Dateinamen und Titel Generierung muss der AusgabeControl
         // verwendet werden
         control = d.getData();
+        filter = ((AuswertungControl) control).getFilterText(false);
       }
-      Map<Filter, String> filter = control.getFilterText(false);
+      else
+      {
+        filter = control.getFilterText(false);
+        filterMap = ((AuswertungControl) control).getFilterText(true);
+      }
 
       ExportLayoutParam params;
 
