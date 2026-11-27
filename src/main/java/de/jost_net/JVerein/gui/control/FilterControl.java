@@ -36,6 +36,7 @@ import de.jost_net.JVerein.keys.Differenz;
 import de.jost_net.JVerein.keys.Filter;
 import de.jost_net.JVerein.keys.Filter.FilterArt;
 import de.jost_net.JVerein.rmi.Buchungsart;
+import de.jost_net.JVerein.rmi.Konto;
 import de.jost_net.JVerein.rmi.Mitglied;
 import de.jost_net.JVerein.rmi.Projekt;
 import de.jost_net.JVerein.rmi.Steuer;
@@ -181,14 +182,30 @@ public abstract class FilterControl extends AbstractListeControl
   public Map<Filter, String> getFilterText(boolean alle) throws RemoteException
   {
     Map<Filter, String> map = new HashMap<>();
+
     for (Filter filter : Filter.values())
     {
+      // Diese Filter gibt es nicht, sie werden aus dem KontoFilter gesetzt
+      if (filter == Filter.KONTO_NR || filter == Filter.KONTO_BEZEICHNUNG)
+      {
+        continue;
+      }
+
       Input input = filterMap.get(filter);
       Object value = input == null ? null : input.getValue();
       String text = "";
+
       if (value == null
           || (value instanceof String && ((String) value).isBlank()))
       {
+        if (filter == Filter.KONTO)
+        {
+          if (alle)
+          {
+            map.put(Filter.KONTO_NR, "");
+            map.put(Filter.KONTO_BEZEICHNUNG, "");
+          }
+        }
         if (alle)
         {
           value = "";
@@ -198,6 +215,7 @@ public abstract class FilterControl extends AbstractListeControl
           continue;
         }
       }
+
       if (value instanceof Date)
       {
         text = new SimpleDateFormat("yyyyMMdd").format(value);
@@ -225,11 +243,19 @@ public abstract class FilterControl extends AbstractListeControl
       {
         text = value.toString();
       }
+
       if (alle || (!text.isBlank() && !text.equals(ALLE)))
       {
         map.put(filter, text);
+
+        if (filter == Filter.KONTO && value instanceof Konto konto)
+        {
+          map.put(Filter.KONTO_NR, konto.getNummer());
+          map.put(Filter.KONTO_BEZEICHNUNG, konto.getBezeichnung());
+        }
       }
     }
+
     return map;
   }
 
