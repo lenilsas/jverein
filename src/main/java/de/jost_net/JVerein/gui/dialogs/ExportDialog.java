@@ -27,11 +27,15 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.FileDialog;
 
+import de.jost_net.JVerein.Queries.MitgliedQuery.MitgliedAuswahl;
+import de.jost_net.JVerein.gui.control.BuchungsControl;
 import de.jost_net.JVerein.gui.control.FilterControl;
+import de.jost_net.JVerein.gui.control.MitgliedControl;
 import de.jost_net.JVerein.gui.dialogs.AbstractPartExportDialog.ExportArt;
 import de.jost_net.JVerein.gui.parts.HelpButton;
 import de.jost_net.JVerein.io.ExportLayoutParam;
 import de.jost_net.JVerein.io.Exporter;
+import de.jost_net.JVerein.io.Exporter.ExportBereich;
 import de.jost_net.JVerein.io.FileViewer;
 import de.jost_net.JVerein.io.IOFormat;
 import de.jost_net.JVerein.io.IORegistry;
@@ -204,13 +208,27 @@ public class ExportDialog extends AbstractDialog<Object>
 
       ExportLayoutParam params;
 
+      ExportBereich bereich = null;
+      if (control instanceof BuchungsControl buchungsControl
+          && !buchungsControl.getGeldkonto())
+      {
+        bereich = ExportBereich.IS_ANLAGENKONTO;
+      }
+
+      if (control instanceof MitgliedControl mitgliedControl
+          && mitgliedControl.getMitgliedAuswahl() != MitgliedAuswahl.MITGLIEDER)
+      {
+        bereich = ExportBereich.IS_NICHTMITGLIEDER;
+      }
+
       if (pdfFormat)
       {
         // Layout Parameter abfragen
         ExporterExportDialog d = new ExporterExportDialog(
             exporter.hasColortable2(), prefix, ExportArt.PDF,
-            exporter.getTitle(filterMap), exporter.getSubtitle(filterMap),
-            exporter.getDateiname(filterMap, objects),
+            exporter.getTitle(filterMap, bereich),
+            exporter.getSubtitle(filterMap, bereich),
+            exporter.getDateiname(filterMap, objects, bereich),
             exporter.getExportDialogOptions());
         if (!d.open())
         {
@@ -221,8 +239,8 @@ public class ExportDialog extends AbstractDialog<Object>
       else
       {
         params = new ExportLayoutParam();
-        params.setTitle(exporter.getTitle(filterMap));
-        params.setSubtitle(exporter.getSubtitle(filterMap));
+        params.setTitle(exporter.getTitle(filterMap, bereich));
+        params.setSubtitle(exporter.getSubtitle(filterMap, bereich));
       }
 
       final String filename;
@@ -246,7 +264,7 @@ public class ExportDialog extends AbstractDialog<Object>
         fd.setText(
             "Bitte geben Sie eine Datei ein, in die die Daten exportiert werden sollen.");
         fd.setOverwrite(true);
-        fd.setFileName(exporter.getDateiname(filterMap, objects));
+        fd.setFileName(exporter.getDateiname(filterMap, objects, bereich));
         if (fileExtensions != null && fileExtensions.length > 0)
         {
           fd.setFilterExtensions(fileExtensions);

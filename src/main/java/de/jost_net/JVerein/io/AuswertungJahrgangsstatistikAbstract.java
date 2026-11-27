@@ -172,14 +172,14 @@ public abstract class AuswertungJahrgangsstatistikAbstract implements Exporter
   protected abstract void close() throws IOException, DocumentException;
 
   @Override
-  public String getTitle(Map<Filter, String> filterMap)
+  public String getTitle(Map<Filter, String> filterMap, ExportBereich bereich)
   {
     return VorlageUtil.getName(VorlageTyp.AUSWERTUNG_JAHRGANGS_STATISTIK_TITEL,
         filterMap);
   }
 
   @Override
-  public String getSubtitle(Map<Filter, String> filterMap)
+  public String getSubtitle(Map<Filter, String> filterMap, ExportBereich bereich)
   {
     return VorlageUtil
         .getName(VorlageTyp.AUSWERTUNG_JAHRGANGS_STATISTIK_SUBTITEL, filterMap);

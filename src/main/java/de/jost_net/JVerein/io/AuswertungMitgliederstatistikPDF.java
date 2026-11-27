@@ -450,21 +450,21 @@ public class AuswertungMitgliederstatistikPDF implements Exporter
   }
 
   @Override
-  public String getDateiname(Map<Filter, String> filterMap, Object[] objects)
+  public String getDateiname(Map<Filter, String> filterMap, Object[] objects, ExportBereich bereich)
   {
     return VorlageUtil.getName(
         VorlageTyp.AUSWERTUNG_MITGLIEDER_STATISTIK_DATEINAME, filterMap) + ".pdf";
   }
 
   @Override
-  public String getTitle(Map<Filter, String> filterMap)
+  public String getTitle(Map<Filter, String> filterMap, ExportBereich bereich)
   {
     return VorlageUtil.getName(VorlageTyp.AUSWERTUNG_MITGLIEDER_STATISTIK_TITEL,
         filterMap);
   }
 
   @Override
-  public String getSubtitle(Map<Filter, String> filterMap)
+  public String getSubtitle(Map<Filter, String> filterMap, ExportBereich bereich)
   {
     return VorlageUtil
         .getName(VorlageTyp.AUSWERTUNG_MITGLIEDER_STATISTIK_SUBTITEL, filterMap);

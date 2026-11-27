@@ -43,6 +43,12 @@ public interface Exporter extends IO
    */
   public final static Session SESSION = new Session();
 
+  public enum ExportBereich
+  {
+    IS_ANLAGENKONTO,
+    IS_NICHTMITGLIEDER
+  }
+
   /**
    * Exportiert die genannten Objekte in den angegebenen OutputStream.
    * 
@@ -67,18 +73,22 @@ public interface Exporter extends IO
    * Dateiname für Report generieren
    * 
    * @param objects
+   * @param bereich
+   *          TODO
    * 
    * @throws RemoteException
    */
-  public String getDateiname(Map<Filter, String> filterMap, Object[] objects)
-      throws RemoteException;
+  public String getDateiname(Map<Filter, String> filterMap, Object[] objects,
+      ExportBereich bereich) throws RemoteException;
 
   /**
    * Titel für Report generieren
    * 
+   * @param filterMap
+   * @param bereich
    * @return Titel
    */
-  default String getTitle(Map<Filter, String> filterMap)
+  default String getTitle(Map<Filter, String> filterMap, ExportBereich bereich)
   {
     return null;
   }
@@ -86,9 +96,12 @@ public interface Exporter extends IO
   /**
    * Subtitel für Report generieren
    * 
+   * @param filterMap
+   * @param bereich
    * @return Subtitle
    */
-  default String getSubtitle(Map<Filter, String> filterMap)
+  default String getSubtitle(Map<Filter, String> filterMap,
+      ExportBereich bereich)
   {
     return null;
   }

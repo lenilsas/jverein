@@ -85,7 +85,7 @@ public class KontenrahmenExportXML extends KontenrahmenExport
   }
 
   @Override
-  public String getDateiname(Map<Filter, String> filterMap, Object[] objects)
+  public String getDateiname(Map<Filter, String> filterMap, Object[] objects, ExportBereich bereich)
   {
     return VorlageUtil.getName(VorlageTyp.KONTENRAHMEN_DATEINAME_V1) + ".xml";
   }

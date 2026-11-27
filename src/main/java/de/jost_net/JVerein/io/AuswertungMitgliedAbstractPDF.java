@@ -30,12 +30,10 @@ public abstract class AuswertungMitgliedAbstractPDF
   protected MitgliedAuswahl mitgliedauswahl = MitgliedAuswahl.MITGLIEDER;
 
   @Override
-  public String getDateiname(Map<Filter, String> filterMap, Object[] objects)
+  public String getDateiname(Map<Filter, String> filterMap, Object[] objects,
+      ExportBereich bereich)
   {
-    // TODO NichtMitglied bestimmung
-    // if (((MitgliedControl) filterMap).getMitgliedAuswahl()
-    // .equals(MitgliedAuswahl.MITGLIEDER))
-    if (true)
+    if (bereich != ExportBereich.IS_NICHTMITGLIEDER)
     {
       return VorlageUtil.getName(VorlageTyp.AUSWERTUNG_MITGLIED_DATEINAME,
           filterMap, getExportName()) + ".pdf";

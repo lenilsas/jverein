@@ -79,7 +79,7 @@ public class AuswertungMitgliedschaftsjubilarePDF
   }
 
   @Override
-  public String getDateiname(Map<Filter, String> filterMap, Object[] objects)
+  public String getDateiname(Map<Filter, String> filterMap, Object[] objects, ExportBereich bereich)
   {
     return VorlageUtil.getName(
         VorlageTyp.AUSWERTUNG_MITGLIEDSCHAFTSJUBILARE_DATEINAME, filterMap)

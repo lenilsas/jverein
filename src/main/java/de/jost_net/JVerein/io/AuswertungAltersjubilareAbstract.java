@@ -107,14 +107,14 @@ public abstract class AuswertungAltersjubilareAbstract implements Exporter
       throws IOException, DocumentException, ApplicationException;
 
   @Override
-  public String getTitle(Map<Filter, String> filterMap)
+  public String getTitle(Map<Filter, String> filterMap, ExportBereich bereich)
   {
     return VorlageUtil.getName(VorlageTyp.AUSWERTUNG_ALTERSJUBILARE_TITEL,
         filterMap);
   }
 
   @Override
-  public String getSubtitle(Map<Filter, String> filterMap)
+  public String getSubtitle(Map<Filter, String> filterMap, ExportBereich bereich)
   {
     return VorlageUtil.getName(VorlageTyp.AUSWERTUNG_ALTERSJUBILARE_SUBTITEL,
         filterMap);

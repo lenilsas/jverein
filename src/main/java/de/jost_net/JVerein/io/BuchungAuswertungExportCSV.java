@@ -33,7 +33,6 @@ import org.supercsv.prefs.CsvPreference;
 import com.itextpdf.text.DocumentException;
 
 import de.jost_net.JVerein.Variable.BuchungMap;
-import de.jost_net.JVerein.gui.control.BuchungsControl;
 import de.jost_net.JVerein.gui.dialogs.AbstractPartExportDialog;
 import de.jost_net.JVerein.keys.Filter;
 import de.jost_net.JVerein.keys.VorlageTyp;
@@ -79,12 +78,10 @@ public class BuchungAuswertungExportCSV implements Exporter
   }
 
   @Override
-  public String getDateiname(Map<Filter, String> filterMap, Object[] objects)
-      throws RemoteException
-  { // TODO Anlagebuchungen?
-
-    if (filterMap instanceof BuchungsControl bcontrol
-        && bcontrol.getGeldkonto())
+  public String getDateiname(Map<Filter, String> filterMap, Object[] objects,
+      ExportBereich bereich) throws RemoteException
+  {
+    if (bereich != ExportBereich.IS_ANLAGENKONTO)
     {
       return VorlageUtil.getName(VorlageTyp.CSVBUCHUNGEN_DATEINAME, filterMap)
           + ".csv";

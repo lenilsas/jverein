@@ -31,7 +31,6 @@ import com.itextpdf.text.Element;
 
 import de.jost_net.JVerein.Einstellungen;
 import de.jost_net.JVerein.Einstellungen.Property;
-import de.jost_net.JVerein.gui.control.BuchungsControl;
 import de.jost_net.JVerein.gui.dialogs.AbstractPartExportDialog;
 import de.jost_net.JVerein.gui.dialogs.BuchungsjournalSortDialog;
 import de.jost_net.JVerein.gui.formatter.BuchungsartFormatter;
@@ -87,12 +86,11 @@ public class BuchungsjournalExportPDF implements Exporter
   }
 
   @Override
-  public String getDateiname(Map<Filter, String> filterMap, Object[] objects)
-      throws RemoteException
+  public String getDateiname(Map<Filter, String> filterMap, Object[] objects,
+      ExportBereich bereich) throws RemoteException
   {
-    // TODO Anlagebuchungen?
-    if (filterMap instanceof BuchungsControl bcontrol
-        && bcontrol.getGeldkonto())
+
+    if (bereich != ExportBereich.IS_ANLAGENKONTO)
     {
       return VorlageUtil.getName(VorlageTyp.BUCHUNGSJOURNAL_DATEINAME,
           filterMap) + ".pdf";
@@ -105,17 +103,33 @@ public class BuchungsjournalExportPDF implements Exporter
   }
 
   @Override
-  public String getTitle(Map<Filter, String> filterMap)
-  { // TODO Anlagebuchungen?
-
-    return VorlageUtil.getName(VorlageTyp.BUCHUNGSJOURNAL_TITEL, filterMap);
+  public String getTitle(Map<Filter, String> filterMap, ExportBereich bereich)
+  {
+    if (bereich != ExportBereich.IS_ANLAGENKONTO)
+    {
+      return VorlageUtil.getName(VorlageTyp.BUCHUNGSJOURNAL_TITEL, filterMap);
+    }
+    else
+    {
+      return VorlageUtil.getName(VorlageTyp.ANLAGEN_BUCHUNGSJOURNAL_TITEL,
+          filterMap);
+    }
   }
 
   @Override
-  public String getSubtitle(Map<Filter, String> filterMap)
-  { // TODO Anlagebuchungen?
-
-    return VorlageUtil.getName(VorlageTyp.BUCHUNGSJOURNAL_SUBTITEL, filterMap);
+  public String getSubtitle(Map<Filter, String> filterMap,
+      ExportBereich bereich)
+  {
+    if (bereich != ExportBereich.IS_ANLAGENKONTO)
+    {
+      return VorlageUtil.getName(VorlageTyp.BUCHUNGSJOURNAL_SUBTITEL,
+          filterMap);
+    }
+    else
+    {
+      return VorlageUtil.getName(VorlageTyp.ANLAGEN_BUCHUNGSJOURNAL_SUBTITEL,
+          filterMap);
+    }
   }
 
   @Override

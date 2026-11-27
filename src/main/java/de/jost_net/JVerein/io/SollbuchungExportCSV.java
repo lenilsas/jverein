@@ -146,7 +146,7 @@ public class SollbuchungExportCSV implements Exporter
   }
 
   @Override
-  public String getDateiname(Map<Filter, String> filterMap, Object[] objects)
+  public String getDateiname(Map<Filter, String> filterMap, Object[] objects, ExportBereich bereich)
   {
     return VorlageUtil.getName(VorlageTyp.SOLLBUCHUNGEN_DATEINAME, filterMap)
         + ".csv";

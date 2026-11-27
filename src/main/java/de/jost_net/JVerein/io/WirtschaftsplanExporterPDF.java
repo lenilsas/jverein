@@ -93,7 +93,7 @@ public class WirtschaftsplanExporterPDF implements Exporter
   }
 
   @Override
-  public String getDateiname(Map<Filter, String> filterMap, Object[] objects)
+  public String getDateiname(Map<Filter, String> filterMap, Object[] objects, ExportBereich bereich)
   {
     return VorlageUtil
         .getName(filterMap == null ? VorlageTyp.WIRTSCHAFTSPLAN_MEHRERE_DATEINAME
@@ -489,7 +489,7 @@ public class WirtschaftsplanExporterPDF implements Exporter
   }
 
   @Override
-  public String getTitle(Map<Filter, String> filterMap)
+  public String getTitle(Map<Filter, String> filterMap, ExportBereich bereich)
   {
     return VorlageUtil
         .getName(filterMap == null ? VorlageTyp.WIRTSCHAFTSPLAN_MEHRERE_TITEL
@@ -497,7 +497,7 @@ public class WirtschaftsplanExporterPDF implements Exporter
   }
 
   @Override
-  public String getSubtitle(Map<Filter, String> filterMap)
+  public String getSubtitle(Map<Filter, String> filterMap, ExportBereich bereich)
   {
     return VorlageUtil
         .getName(filterMap == null ? VorlageTyp.WIRTSCHAFTSPLAN_MEHRERE_SUBTITEL

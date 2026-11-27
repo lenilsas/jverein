@@ -23,12 +23,9 @@ public abstract class AuswertungMitgliedAbstract implements Exporter
 {
 
   @Override
-  public String getTitle(Map<Filter, String> filterMap)
+  public String getTitle(Map<Filter, String> filterMap, ExportBereich bereich)
   {
-    // TODO NichtMitglied bestimmung
-    // if (((MitgliedControl) filterMap).getMitgliedAuswahl()
-    // .equals(MitgliedAuswahl.MITGLIEDER))
-    if (true)
+    if (bereich != ExportBereich.IS_NICHTMITGLIEDER)
     {
       return VorlageUtil.getName(VorlageTyp.AUSWERTUNG_MITGLIED_TITEL,
           filterMap, getExportName());
@@ -41,11 +38,10 @@ public abstract class AuswertungMitgliedAbstract implements Exporter
   }
 
   @Override
-  public String getSubtitle(Map<Filter, String> filterMap)
-  {// TODO NichtMitglied bestimmung
-   // if (((MitgliedControl) filterMap).getMitgliedAuswahl()
-   // .equals(MitgliedAuswahl.MITGLIEDER))
-    if (true)
+  public String getSubtitle(Map<Filter, String> filterMap,
+      ExportBereich bereich)
+  {
+    if (bereich != ExportBereich.IS_NICHTMITGLIEDER)
     {
       return VorlageUtil.getName(VorlageTyp.AUSWERTUNG_MITGLIED_SUBTITEL,
           filterMap, getExportName());
@@ -61,8 +57,7 @@ public abstract class AuswertungMitgliedAbstract implements Exporter
   {
     String name = getName();
     // Extension wird entfernt damit sie in Dateinamen oder Titel nicht
-    // enthalten
-    // ist
+    // enthalten ist
     return name.substring(0, name.length() - 4);
   }
 

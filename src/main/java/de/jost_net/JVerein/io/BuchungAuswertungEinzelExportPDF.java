@@ -33,7 +33,6 @@ import com.itextpdf.text.Paragraph;
 
 import de.jost_net.JVerein.Einstellungen;
 import de.jost_net.JVerein.Einstellungen.Property;
-import de.jost_net.JVerein.gui.control.BuchungsControl;
 import de.jost_net.JVerein.gui.dialogs.AbstractPartExportDialog;
 import de.jost_net.JVerein.gui.formatter.BuchungsartFormatter;
 import de.jost_net.JVerein.gui.formatter.BuchungsklasseFormatter;
@@ -88,12 +87,10 @@ public class BuchungAuswertungEinzelExportPDF extends BuchungAuswertungExportPDF
   }
 
   @Override
-  public String getDateiname(Map<Filter, String> filterMap, Object[] objects)
-      throws RemoteException
-  { // TODO Anlagebuchungen?
-
-    if (filterMap instanceof BuchungsControl bcontrol
-        && bcontrol.getGeldkonto())
+  public String getDateiname(Map<Filter, String> filterMap, Object[] objects,
+      ExportBereich bereich) throws RemoteException
+  {
+    if (bereich != ExportBereich.IS_ANLAGENKONTO)
     {
       return VorlageUtil.getName(VorlageTyp.EINZELBUCHUNGEN_DATEINAME,
           filterMap) + ".pdf";
@@ -106,17 +103,33 @@ public class BuchungAuswertungEinzelExportPDF extends BuchungAuswertungExportPDF
   }
 
   @Override
-  public String getTitle(Map<Filter, String> filterMap)
-  { // TODO Anlagebuchungen?
-
-    return VorlageUtil.getName(VorlageTyp.EINZELBUCHUNGEN_TITEL, filterMap);
+  public String getTitle(Map<Filter, String> filterMap, ExportBereich bereich)
+  {
+    if (bereich != ExportBereich.IS_ANLAGENKONTO)
+    {
+      return VorlageUtil.getName(VorlageTyp.EINZELBUCHUNGEN_TITEL, filterMap);
+    }
+    else
+    {
+      return VorlageUtil.getName(VorlageTyp.ANLAGEN_EINZELBUCHUNGEN_TITEL,
+          filterMap);
+    }
   }
 
   @Override
-  public String getSubtitle(Map<Filter, String> filterMap)
-  { // TODO Anlagebuchungen?
-
-    return VorlageUtil.getName(VorlageTyp.EINZELBUCHUNGEN_SUBTITEL, filterMap);
+  public String getSubtitle(Map<Filter, String> filterMap,
+      ExportBereich bereich)
+  {
+    if (bereich != ExportBereich.IS_ANLAGENKONTO)
+    {
+      return VorlageUtil.getName(VorlageTyp.EINZELBUCHUNGEN_SUBTITEL,
+          filterMap);
+    }
+    else
+    {
+      return VorlageUtil.getName(VorlageTyp.ANLAGEN_EINZELBUCHUNGEN_SUBTITEL,
+          filterMap);
+    }
   }
 
   @Override
